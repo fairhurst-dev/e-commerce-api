@@ -1,0 +1,73 @@
+service: e-commerce-api
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+
+functions:
+  #users
+  signUp:
+    handler: src/user/sign_up.handler
+    events:
+      - httpApi:
+          path: /register
+          method: POST
+
+  login:
+    handler: src/user/login.handler
+    events:
+      - httpApi:
+          path: /register
+          method: POST
+
+  #products
+  createProduct:
+    handler: src/product/create_product.handler
+    events:
+      - httpApi:
+          path: /product
+          method: POST
+
+  getProduct:
+    handler: src/product/get_product.handler
+    events:
+      - httpApi:
+          path: /product
+          method: GET
+
+  updateProduct:
+    handler: src/product/update_product.handler
+    events:
+      - httpApi:
+          path: /product/{id}
+          method: PATCH
+
+  searchProducts:
+    handler: src/product/search_product.handler
+    events:
+      - httpApi:
+          path: /product/search
+          method: GET
+
+  #cart
+  getCart:
+    handler: src/cart/get_cart.handler
+    events:
+      - httpApi:
+          path: /cart/{id}
+          method: GET
+
+  updateCart:
+    handler: src/cart/update_cart.handler
+    events:
+      - httpApi:
+          path: /cart
+          method: PATCH
+
+  #checkout
+  checkout:
+    handler: src/checkout/checkout.handler
+    events:
+      - httpApi:
+          path: /checkout
+          method: POST
