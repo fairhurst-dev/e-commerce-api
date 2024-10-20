@@ -1,0 +1,36 @@
+Resources:
+  userPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: ${sls:service}-${sls:stage}-user-pool
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+          RequireUppercase: true
+      Schema:
+        - Name: email
+          Required: true
+          Mutable: true
+      MfaConfiguration: OFF
+      EmailVerificationMessage: "Your verification code is {####}"
+      EmailVerificationSubject: "Verify your email"
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+      UsernameConfiguration:
+        CaseSensitive: false
+  userPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: ${sls:service}-${sls:stage}-user-pool-client
+      UserPoolId:
+        Ref: userPool
+      ExplicitAuthFlows:
+        - ADMIN_NO_SRP_AUTH
+      GenerateSecret: false
