@@ -1,0 +1,7 @@
+iam:
+  role:
+    statements:
+      - Effect: "Allow"
+        Action:
+          - "cognito-idp:AdminInitiateAuth"
+          - "cognito-idp:AdminRespondToAuthChallenge"
