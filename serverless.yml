@@ -22,10 +22,17 @@ build:
 functions:
   #users
   signUp:
-    handler: src/user/sign_up.handler
+    handler: src/user/web/sign_up.handler
     events:
       - httpApi:
           path: /auth/register
+          method: POST
+
+  confirmSignUp:
+    handler: src/user/web/confirm.handler
+    events:
+      - httpApi:
+          path: /auth/confirm
           method: POST
 
   # login:
@@ -95,3 +102,5 @@ functions:
   #         method: POST
 
 resources: ${file(resources.yml)}
+
+iam: ${file(iam.yml)}

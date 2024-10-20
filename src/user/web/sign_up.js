@@ -1,6 +1,7 @@
 import { path } from "ramda";
 import { signUp } from "#lib/cognito.js";
 import { signupValidator } from "#lib/validators.js";
+
 export const handler = async (event) => {
   const email = path(["body", "email"], event);
   const password = path(["body", "password"], event);
@@ -9,7 +10,10 @@ export const handler = async (event) => {
     await signUp(payload);
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: "User signed up" }),
+      body: JSON.stringify({
+        message: "User has been created",
+        session,
+      }),
     };
   } catch (error) {
     return {

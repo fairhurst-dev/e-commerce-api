@@ -2,7 +2,7 @@ Resources:
   userPool:
     Type: AWS::Cognito::UserPool
     Properties:
-      UserPoolName: ${sls:service}-${sls:stage}-user-pool
+      UserPoolName: ${self:service}-${sls:stage}-user-pool
       UsernameAttributes:
         - email
       AutoVerifiedAttributes:
@@ -28,7 +28,7 @@ Resources:
   userPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
-      ClientName: ${sls:service}-${sls:stage}-user-pool-client
+      ClientName: ${self:service}-${sls:stage}-user-pool-client
       UserPoolId:
         Ref: userPool
       ExplicitAuthFlows:

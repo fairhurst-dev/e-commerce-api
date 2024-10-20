@@ -24,5 +24,14 @@ describe("validators", () => {
           };
       });
     });
+    it("no otp is an error", () => {
+      assert.throws(() => {
+        signupValidator({ email: "foo@bar.com", otp: "" }),
+          {
+            name: "Error",
+            message: '"otp" is not allowed to be empty',
+          };
+      });
+    });
   });
 });
