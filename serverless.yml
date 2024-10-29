@@ -7,6 +7,7 @@ package:
 provider:
   name: aws
   runtime: nodejs20.x
+  stage: dev
   environment:
     USER_POOL_CLIENT_ID:
       Fn::GetAtt:
@@ -14,6 +15,20 @@ provider:
         - ClientId
     USER_POOL_ID:
       Ref: userPool
+  logRetentionInDays: 30
+  httpApi:
+    metrics: true
+    cors: true
+    authorizers:
+      jwtAuthorizer:
+        identitySource: $request.header.Authorization
+        issuerUrl:
+          Fn::GetAtt:
+            - userPool
+            - ProviderURL
+        audience:
+          - Ref: userPoolClient
+  #iam: ${file(iam.yml)}
 
 plugins:
   - serverless-esbuild
@@ -27,73 +42,80 @@ functions:
     handler: src/user/web/signup.handler
     events:
       - httpApi:
-          path: /auth/register
           method: POST
+          path: /auth/register
 
   confirmSignUp:
     handler: src/user/web/confirm.handler
     events:
       - httpApi:
-          path: /auth/confirm
           method: POST
+          path: /auth/confirm
 
   login:
     handler: src/user/web/login.handler
     events:
       - httpApi:
-          path: /auth/login
           method: POST
+          path: /auth/login
 
   refresh:
     handler: src/user/web/refresh.handler
     events:
       - httpApi:
-          path: /auth/refresh
           method: POST
+          path: /auth/refresh
 
-  # #products
-  # createProduct:
-  #   handler: src/product/create_product.handler
-  #   events:
-  #     - httpApi:
-  #         path: /product
-  #         method: POST
+  createProduct:
+    handler: src/product/web/create_product.handler
+    events:
+      - httpApi:
+          method: POST
+          path: /product
+          authorizer:
+            name: jwtAuthorizer
 
-  # getProduct:
-  #   handler: src/product/get_product.handler
-  #   events:
-  #     - httpApi:
-  #         path: /product
-  #         method: GET
+  getProduct:
+    handler: src/product/web/get_product.handler
+    events:
+      - httpApi:
+          method: GET
+          path: /product
 
-  # updateProduct:
-  #   handler: src/product/update_product.handler
-  #   events:
-  #     - httpApi:
-  #         path: /product/{id}
-  #         method: PATCH
+  updateProduct:
+    handler: src/product/web/update_product.handler
+    events:
+      - httpApi:
+          method: PATCH
+          path: /product/{id}
+          authorizer:
+            name: jwtAuthorizer
 
-  # searchProducts:
-  #   handler: src/product/search_product.handler
-  #   events:
-  #     - httpApi:
-  #         path: /product/search
-  #         method: GET
+  searchProducts:
+    handler: src/product/web/search_products.handler
+    events:
+      - httpApi:
+          method: POST
+          path: /product/search
 
-  # #cart
+  #cart
   # getCart:
   #   handler: src/cart/get_cart.handler
   #   events:
   #     - httpApi:
-  #         path: /cart/{id}
   #         method: GET
+  #         path: /cart/{id}
+  #         authorizer:
+  #           name: jwtAuthorizer
 
   # updateCart:
   #   handler: src/cart/update_cart.handler
   #   events:
   #     - httpApi:
-  #         path: /cart
   #         method: PATCH
+  #         path: /cart
+  #         authorizer:
+  #           name: jwtAuthorizer
 
   # #checkout
   # checkout:
@@ -102,7 +124,7 @@ functions:
   #     - httpApi:
   #         path: /checkout
   #         method: POST
+  #          authorizer:
+  #            name: jwtAuthorizer
 
 resources: ${file(resources.yml)}
-
-iam: ${file(iam.yml)}

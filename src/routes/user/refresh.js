@@ -1,10 +1,11 @@
 import { path } from "ramda";
-import { refresh } from "#lib/cognito.js";
-import { refreshValidator } from "#lib/validators.js";
+import { refresh } from "#lib/services/cognito.js";
+import { refreshValidator } from "#lib/utils/validators.js";
+import { middyfy } from "#lib/services/middleware.js";
 
-export const handler = async (event) => {
+const refreshHandler = async (event) => {
   const refreshToken = path(["body", "refreshToken"], event);
-  const deviceKey = path(["body", "deviceKey"], event);
+  const deviceKey = path(["body", "deviceKey"], event); //TODO: Where is this
   try {
     const payload = refreshValidator({ refreshToken, deviceKey });
 
@@ -23,3 +24,5 @@ export const handler = async (event) => {
     };
   }
 };
+
+export const handler = middyfy(refreshHandler);

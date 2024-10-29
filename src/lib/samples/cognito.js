@@ -1,4 +1,4 @@
-export const loginCognitoResp = {
+export const LOGIN_COGNITO_RESP = {
   AuthenticationResult: {
     AccessToken: "eyJra456defEXAMPLE",
     ExpiresIn: 3600,
