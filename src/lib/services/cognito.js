@@ -4,7 +4,7 @@ import {
   ConfirmSignUpCommand,
   InitiateAuthCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
-import { authRespForClient } from "#lib/formatters.js";
+import { authRespForClient } from "#lib/utils/formatters.js";
 
 const cognitoClient = new CognitoIdentityProviderClient({});
 const clientId = process.env.USER_POOL_CLIENT_ID;
@@ -44,11 +44,11 @@ export const refresh = async ({ refreshToken, deviceKey }) => {
     ClientId: clientId,
     AuthParameters: {
       REFRESH_TOKEN: refreshToken,
-      DEVICE_KEY: deviceKey,
     },
   });
 
   const resp = await cognitoClient.send(command);
+
   return authRespForClient(resp);
 };
 

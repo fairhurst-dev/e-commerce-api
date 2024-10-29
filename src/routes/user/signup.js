@@ -1,19 +1,18 @@
 import { path } from "ramda";
-import { login } from "#lib/cognito.js";
-import { userValidator } from "#lib/validators.js";
+import { signup } from "#lib/services/cognito.js";
+import { userValidator } from "#lib/utils/validators.js";
+import { middyfy } from "#lib/services/middleware.js";
 
-export const handler = async (event) => {
+const signupHandler = async (event) => {
   const email = path(["body", "email"], event);
   const password = path(["body", "password"], event);
   try {
     const payload = userValidator({ email, password });
-
-    const response = await login(payload);
+    await signup(payload);
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: "User logged in",
-        response,
+        message: "User has been created",
       }),
     };
   } catch (error) {
@@ -23,3 +22,5 @@ export const handler = async (event) => {
     };
   }
 };
+
+export const handler = middyfy(signupHandler);

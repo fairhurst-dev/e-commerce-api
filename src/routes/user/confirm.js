@@ -1,8 +1,9 @@
 import { path } from "ramda";
-import { confirmSignUp } from "#lib/cognito.js";
-import { confirmOTPValidator } from "#lib/validators.js";
+import { confirmSignUp } from "#lib/services/cognito.js";
+import { confirmOTPValidator } from "#lib/utils/validators.js";
+import { middyfy } from "#lib/services/middleware.js";
 
-export const handler = async (event) => {
+const confirmHandler = async (event) => {
   const email = path(["body", "email"], event);
   const otp = path(["body", "otp"], event);
   try {
@@ -22,3 +23,5 @@ export const handler = async (event) => {
     };
   }
 };
+
+export const handler = middyfy(confirmHandler);

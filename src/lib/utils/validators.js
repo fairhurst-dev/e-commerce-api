@@ -1,5 +1,9 @@
 import { map, pipe, prop, join, curry } from "ramda";
-import { userSchema, confirmOTPSchema, refreshSchema } from "#lib/schemas.js";
+import {
+  userSchema,
+  confirmOTPSchema,
+  refreshSchema,
+} from "#lib/utils/schemas.js";
 
 const joiDefaults = {
   abortEarly: false,
