@@ -1,9 +1,14 @@
-import { middyfy } from "#lib/services/middleware.js";
+import { middyfy } from "#lib/middleware.js";
 import { prop } from "ramda";
-import { getIsAdmin } from "#lib/utils/authorizer.js";
+import { getIsAdmin } from "#lib/authorizer.js";
+import { upsertProduct } from "#lib/services/dynamodb/index.js";
+import { newProductValidator } from "#lib/validators.js";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
 
 const createProductHandler = async (event) => {
-  const product = prop("body", event);
+  //TODO: rewrite these functionally?
+
+  const body = prop("body", event);
   try {
     const isAdmin = getIsAdmin(event);
 
@@ -14,14 +19,15 @@ const createProductHandler = async (event) => {
       };
     }
 
-    // const payload = productValidator(product);
+    const payload = newProductValidator(body);
 
-    //await createProduct(payload);
+    const product = await upsertProduct(payload);
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: "Product created" }),
+      body: JSON.stringify({ body: product, message: "Product created" }),
     };
   } catch (error) {
+    console.error(error);
     return {
       statusCode: 500,
       body: JSON.stringify({ message: error.message }),
@@ -29,4 +35,4 @@ const createProductHandler = async (event) => {
   }
 };
 
-export const handler = middyfy(createProductHandler);
+export const handler = middyfy(createProductHandler).use(httpJsonBodyParser());

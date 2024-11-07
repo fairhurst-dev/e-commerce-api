@@ -4,6 +4,14 @@ frameworkVersion: "4"
 package:
   individually: true
 
+stages:
+  prod:
+    params:
+      replicas_enabled: ENABLED
+  default:
+    params:
+      replicas_enabled: DISABLED
+
 provider:
   name: aws
   runtime: nodejs20.x
@@ -15,6 +23,12 @@ provider:
         - ClientId
     USER_POOL_ID:
       Ref: userPool
+    PRODUCTS_TABLE:
+      Ref: productTable
+    PRODUCTS_COLLECTION_ENDPOINT:
+      Fn::GetAtt:
+        - productsSearchCollection
+        - CollectionEndpoint
   logRetentionInDays: 30
   httpApi:
     metrics: true
@@ -28,7 +42,8 @@ provider:
             - ProviderURL
         audience:
           - Ref: userPoolClient
-  #iam: ${file(iam.yml)}
+
+  iam: ${file(iam.yml)}
 
 plugins:
   - serverless-esbuild
@@ -39,35 +54,35 @@ build:
 functions:
   #users
   signUp:
-    handler: src/user/web/signup.handler
+    handler: src/routes/user/signup.handler
     events:
       - httpApi:
           method: POST
           path: /auth/register
 
   confirmSignUp:
-    handler: src/user/web/confirm.handler
+    handler: src/routes/user/confirm.handler
     events:
       - httpApi:
           method: POST
           path: /auth/confirm
 
   login:
-    handler: src/user/web/login.handler
+    handler: src/routes/user/login.handler
     events:
       - httpApi:
           method: POST
           path: /auth/login
 
   refresh:
-    handler: src/user/web/refresh.handler
+    handler: src/routes/user/refresh.handler
     events:
       - httpApi:
           method: POST
           path: /auth/refresh
 
   createProduct:
-    handler: src/product/web/create_product.handler
+    handler: src/routes/product/create_product.handler
     events:
       - httpApi:
           method: POST
@@ -76,14 +91,14 @@ functions:
             name: jwtAuthorizer
 
   getProduct:
-    handler: src/product/web/get_product.handler
+    handler: src/routes/product/get_product.handler
     events:
       - httpApi:
           method: GET
-          path: /product
+          path: /product/{id}
 
   updateProduct:
-    handler: src/product/web/update_product.handler
+    handler: src/routes/product/update_product.handler
     events:
       - httpApi:
           method: PATCH
@@ -92,11 +107,26 @@ functions:
             name: jwtAuthorizer
 
   searchProducts:
-    handler: src/product/web/search_products.handler
+    handler: src/routes/product/search_products.handler
     events:
       - httpApi:
           method: POST
-          path: /product/search
+          path: /search/product
+
+  filterProductByCategories:
+    handler: src/routes/product/get_products_by_categories.handler
+    events:
+      - httpApi:
+          method: POST
+          path: /categories/product
+
+  indexProductToSearch:
+    handler: src/functions/opensearch/index_product_to_search.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt: [productTable, StreamArn]
 
   #cart
   # getCart:
@@ -126,5 +156,12 @@ functions:
   #         method: POST
   #          authorizer:
   #            name: jwtAuthorizer
+
+  #Internal functions
+  createIndex:
+    handler: src/functions/opensearch/create_index.handler
+
+  updateMappings:
+    handler: src/functions/opensearch/update_mappings.handler
 
 resources: ${file(resources.yml)}

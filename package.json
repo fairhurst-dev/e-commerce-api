@@ -10,7 +10,7 @@
   },
   "type": "module",
   "scripts": {
-    "test": "node --test --test-reporter spec",
+    "test": "USER_POOL_CLIENT_ID=client123 USER_POOL_ID=pool123 PRODUCTS_TABLE=products-test-table node --test --test-reporter spec",
     "dev": "node --test --watch",
     "build": "npx sls package",
     "lint": "npx eslint"
@@ -27,19 +27,24 @@
   "homepage": "https://github.com/fairhurst-dev/e-commerce-api#readme",
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.675.0",
+    "@aws-sdk/client-dynamodb": "^3.687.0",
+    "@aws-sdk/credential-provider-node": "^3.658.0",
+    "@aws-sdk/lib-dynamodb": "^3.687.0",
     "@middy/core": "^5.5.1",
     "@middy/http-cors": "^5.5.1",
     "@middy/http-error-handler": "^5.5.1",
     "@middy/http-json-body-parser": "^5.5.1",
+    "@opensearch-project/opensearch": "^2.12.0",
+    "crypto": "^1.0.1",
     "joi": "^17.13.3",
-    "ramda": "^0.30.1",
-    "serverless": "^4.4.6"
+    "ramda": "^0.30.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
     "esbuild": "^0.24.0",
     "eslint": "^9.13.0",
     "globals": "^15.11.0",
-    "serverless-esbuild": "^1.54.4"
+    "serverless-esbuild": "^1.54.4",
+    "serverless": "^4.4.6"
   }
 }

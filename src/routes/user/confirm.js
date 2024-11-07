@@ -1,7 +1,8 @@
 import { path } from "ramda";
-import { confirmSignUp } from "#lib/services/cognito.js";
-import { confirmOTPValidator } from "#lib/utils/validators.js";
-import { middyfy } from "#lib/services/middleware.js";
+import { confirmSignUp } from "#lib/services/cognito/index.js";
+import { confirmOTPValidator } from "#lib/validators.js";
+import { middyfy } from "#lib/middleware.js";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
 
 const confirmHandler = async (event) => {
   const email = path(["body", "email"], event);
@@ -17,6 +18,7 @@ const confirmHandler = async (event) => {
       }),
     };
   } catch (error) {
+    console.error(error);
     return {
       statusCode: 500,
       body: JSON.stringify({ message: error.message }),
@@ -24,4 +26,4 @@ const confirmHandler = async (event) => {
   }
 };
 
-export const handler = middyfy(confirmHandler);
+export const handler = middyfy(confirmHandler).use(httpJsonBodyParser());

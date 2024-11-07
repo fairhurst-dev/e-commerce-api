@@ -1,18 +1,20 @@
 import { middyfy } from "#lib/middleware.js";
 import { path } from "ramda";
-import { searchProducts } from "#lib/services/opensearch/index.js";
+import { getProductsByCategories } from "#lib/services/opensearch/index.js";
 
 const searchProductsHandler = async (event) => {
-  const query = path(["queryStringParameters", "q"], event);
-  if (!query) {
+  console.log("event", event);
+  const qsp = path(["queryStringParameters", "categories"], event);
+  console.log("qsp", qsp);
+  if (!qsp) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ message: "Query not provided" }),
+      body: JSON.stringify({ message: "Query String Parameters not provided" }),
     };
   }
 
   try {
-    const products = await searchProducts(query);
+    const products = await getProductsByCategories(qsp);
 
     return {
       statusCode: 200,
