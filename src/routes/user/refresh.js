@@ -1,7 +1,8 @@
 import { path } from "ramda";
-import { refresh } from "#lib/services/cognito.js";
-import { refreshValidator } from "#lib/utils/validators.js";
-import { middyfy } from "#lib/services/middleware.js";
+import { refresh } from "#lib/services/cognito/index.js";
+import { refreshValidator } from "#lib/validators.js";
+import { middyfy } from "#lib/middleware.js";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
 
 const refreshHandler = async (event) => {
   const refreshToken = path(["body", "refreshToken"], event);
@@ -18,6 +19,7 @@ const refreshHandler = async (event) => {
       }),
     };
   } catch (error) {
+    console.error(error);
     return {
       statusCode: 500,
       body: JSON.stringify({ message: error.message }),
@@ -25,4 +27,4 @@ const refreshHandler = async (event) => {
   }
 };
 
-export const handler = middyfy(refreshHandler);
+export const handler = middyfy(refreshHandler).use(httpJsonBodyParser());

@@ -3,7 +3,9 @@ import {
   userSchema,
   confirmOTPSchema,
   refreshSchema,
-} from "#lib/utils/schemas.js";
+  newProductSchema,
+  updateProductSchema,
+} from "#lib/schemas.js";
 
 const joiDefaults = {
   abortEarly: false,
@@ -24,3 +26,7 @@ export const userValidator = baseValidator(userSchema);
 export const confirmOTPValidator = baseValidator(confirmOTPSchema);
 
 export const refreshValidator = baseValidator(refreshSchema);
+
+export const newProductValidator = baseValidator(newProductSchema);
+
+export const updateProductValidator = baseValidator(updateProductSchema);

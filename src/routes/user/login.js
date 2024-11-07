@@ -1,7 +1,8 @@
 import { path } from "ramda";
-import { login } from "#lib/services/cognito.js";
-import { userValidator } from "#lib/utils/validators.js";
-import { middyfy } from "#lib/services/middleware.js";
+import { login } from "#lib/services/cognito/index.js";
+import { userValidator } from "#lib/validators.js";
+import { middyfy } from "#lib/middleware.js";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
 
 const loginHandler = async (event) => {
   const email = path(["body", "email"], event);
@@ -18,6 +19,7 @@ const loginHandler = async (event) => {
       }),
     };
   } catch (error) {
+    console.error(error);
     return {
       statusCode: 500,
       body: JSON.stringify({ message: error.message }),
@@ -25,4 +27,4 @@ const loginHandler = async (event) => {
   }
 };
 
-export const handler = middyfy(loginHandler);
+export const handler = middyfy(loginHandler).use(httpJsonBodyParser());

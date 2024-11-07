@@ -1,10 +1,13 @@
-import { middyfy } from "#lib/services/middleware.js";
-import { prop } from "ramda";
-import { getIsAdmin } from "#lib/utils/authorizer.js";
+import { middyfy } from "#lib/middleware.js";
+import { prop, path } from "ramda";
+import { getIsAdmin } from "#lib/authorizer.js";
+import { upsertProduct, getProduct } from "#lib/services/dynamodb/index.js";
+import { updateProductValidator } from "#lib/validators.js";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
 
 const createProductsHandler = async (event) => {
-  console.log("my auth event is ", event);
-  const product = prop("body", event);
+  const eventBody = prop("body", event);
+  const productId = path(["pathParameters", "id"], event);
   try {
     const isAdmin = getIsAdmin(event);
 
@@ -15,14 +18,24 @@ const createProductsHandler = async (event) => {
       };
     }
 
-    // const payload = productValidator(product);
+    const existingProduct = await getProduct(productId);
 
-    //await updateProduct(payload);
+    if (!existingProduct) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: "Product not found" }),
+      };
+    }
+
+    const payload = updateProductValidator(eventBody);
+
+    const product = await upsertProduct(payload);
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: "Product updated" }),
+      body: JSON.stringify({ body: product, message: "Product updated" }),
     };
   } catch (error) {
+    console.error(error);
     return {
       statusCode: 500,
       body: JSON.stringify({ message: error.message }),
@@ -30,4 +43,4 @@ const createProductsHandler = async (event) => {
   }
 };
 
-export const handler = middyfy(createProductsHandler);
+export const handler = middyfy(createProductsHandler).use(httpJsonBodyParser());
