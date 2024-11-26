@@ -40,10 +40,10 @@ Resources:
     Properties:
       TableName: ${self:service}-${sls:stage}-product
       AttributeDefinitions:
-        - AttributeName: id
+        - AttributeName: PK
           AttributeType: S
       KeySchema:
-        - AttributeName: id
+        - AttributeName: PK
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
       StreamSpecification:
