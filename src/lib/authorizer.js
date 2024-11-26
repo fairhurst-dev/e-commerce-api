@@ -8,4 +8,12 @@ const getCognitoGroups = path([
   "cognito:groups",
 ]);
 
-export const getIsAdmin = pipe(getCognitoGroups, includes("admin"));
+export const getIsAdmin = pipe(getCognitoGroups, includes("Admin"));
+
+export const getUserUUID = path([
+  "requestContext",
+  "authorizer",
+  "jwt",
+  "claims",
+  "username",
+]);

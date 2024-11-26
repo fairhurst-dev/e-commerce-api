@@ -25,7 +25,7 @@ export const makeClient = () =>
         return credentialsProvider();
       },
     }),
-    node: process.env.PRODUCTS_DOMAIN_ENDPOINT, // OpenSearch domain URL
+    node: `https://${process.env.PRODUCTS_DOMAIN_ENDPOINT}`, // OpenSearch domain URL
   });
 
 const addIndexName = assoc("index", INDEX_NAME);

@@ -1,19 +1,78 @@
-import { applySpec, assoc, identity, pipe } from "ramda";
+import { applySpec, assoc, concat, identity, pipe, always, prop } from "ramda";
 
-const formatTableName = assoc("TableName", process.env.PRODUCTS_TABLE);
+const addTableName = assoc("TableName", process.env.E_COMMERCE_TABLE);
 
-export const makeUpsertProductInput = pipe(
+//keys
+
+const BASE_PREFIX = "#";
+const PRODUCT_PREFIX = "PRODUCT#";
+const USER_PREFIX = "USER#";
+
+const addProductPrefix = concat(PRODUCT_PREFIX);
+const addUserPrefix = concat(USER_PREFIX);
+
+const formatProductKey = applySpec({
+  PK: addProductPrefix,
+  SK: always(BASE_PREFIX),
+});
+
+const formatCartKey = applySpec({
+  PK: pipe(prop("userUUID"), addUserPrefix),
+  SK: pipe(prop("id"), addProductPrefix),
+});
+
+//records
+
+const formatProductRecord = (product) => ({
+  ...product,
+  ...formatProductKey(product.id),
+});
+
+const formatCartItemRecord = (cartItem) => ({
+  ...cartItem,
+  ...formatCartKey(cartItem),
+});
+
+const baseUpsertRecordInput = pipe(
   applySpec({
     Item: identity,
   }),
-  formatTableName
+  addTableName
 );
 
-export const makeGetProductInput = pipe(
+const baseGetRecordInput = pipe(
   applySpec({
     Key: {
-      id: identity,
+      PK: prop("PK"),
+      SK: prop("SK"),
     },
   }),
-  formatTableName
+  addTableName
+);
+
+//queries
+const formatCartQuery = applySpec({
+  KeyConditionExpression: always("PK = :pk and begins_with(SK, :sk)"),
+  ExpressionAttributeValues: {
+    ":pk": addUserPrefix,
+    ":sk": always(PRODUCT_PREFIX),
+  },
+});
+
+//exports
+
+export const makeGetCartInput = pipe(formatCartQuery, addTableName);
+
+export const makeUpsertCartItemInput = pipe(
+  formatCartItemRecord,
+  baseUpsertRecordInput
+);
+
+export const makeGetCartItemInput = pipe(formatCartKey, baseGetRecordInput);
+
+export const makeGetProductInput = pipe(formatProductKey, baseGetRecordInput);
+
+export const makeUpsertProductInput = pipe(
+  formatProductRecord,
+  baseUpsertRecordInput
 );

@@ -7,8 +7,12 @@ const unmarshallProduct = pipe(path(["dynamodb", "NewImage"]), unmarshall);
 export const handler = async (event) => {
   for (const record of event.Records) {
     try {
-      const product = unmarshallProduct(record);
-      await indexProduct(product);
+      const unmarshalled = unmarshallProduct(record);
+      if (unmarshalled.PK.includes("PRODUCT")) {
+        await indexProduct(unmarshalled);
+      } else {
+        console.log("Record is not a product");
+      }
     } catch (error) {
       console.error(error);
     }

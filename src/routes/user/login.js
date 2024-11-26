@@ -4,7 +4,8 @@ import { userValidator } from "#lib/validators.js";
 import { middyfy } from "#lib/middleware.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 
-const loginHandler = async (event) => {
+export const handler = async (e) => {
+  const event = { body: JSON.parse(e.body) };
   const email = path(["body", "email"], event);
   const password = path(["body", "password"], event);
   try {
@@ -27,4 +28,4 @@ const loginHandler = async (event) => {
   }
 };
 
-export const handler = middyfy(loginHandler).use(httpJsonBodyParser());
+//export const handler = middyfy(loginHandler).use(httpJsonBodyParser());

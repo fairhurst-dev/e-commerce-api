@@ -26,7 +26,7 @@ export const SAMPLE_HTTP_EVENT = {
         claims: {
           auth_time: "1730750968",
           client_id: "XXXXX",
-          "cognito:groups": "[admins]",
+          "cognito:groups": "[Admin]",
           event_id: "184cce8f2545439ba39bbc5ee21339d7",
           exp: "1730757309",
           iat: "1730753709",

@@ -4,7 +4,8 @@ import {
   confirmOTPSchema,
   refreshSchema,
   newProductSchema,
-  updateProductSchema,
+  completeProductSchema,
+  cartItemSchema,
 } from "#lib/schemas.js";
 
 const joiDefaults = {
@@ -29,4 +30,6 @@ export const refreshValidator = baseValidator(refreshSchema);
 
 export const newProductValidator = baseValidator(newProductSchema);
 
-export const updateProductValidator = baseValidator(updateProductSchema);
+export const updateProductValidator = baseValidator(completeProductSchema);
+
+export const cartItemValidator = baseValidator(cartItemSchema);

@@ -4,7 +4,9 @@ import { confirmOTPValidator } from "#lib/validators.js";
 import { middyfy } from "#lib/middleware.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 
-const confirmHandler = async (event) => {
+export const handler = async (e) => {
+  const event = { body: JSON.parse(e.body) };
+
   const email = path(["body", "email"], event);
   const otp = path(["body", "otp"], event);
   try {
@@ -26,4 +28,4 @@ const confirmHandler = async (event) => {
   }
 };
 
-export const handler = middyfy(confirmHandler).use(httpJsonBodyParser());
+//export const handler = middyfy(confirmHandler).use(httpJsonBodyParser());
