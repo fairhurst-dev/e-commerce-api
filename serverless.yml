@@ -133,23 +133,23 @@ functions:
     handler: src/functions/opensearch/test_query.handler
 
   #cart
-  # getCart:
-  #   handler: src/cart/get_cart.handler
-  #   events:
-  #     - httpApi:
-  #         method: GET
-  #         path: /cart/{id}
-  #         authorizer:
-  #           name: jwtAuthorizer
+  getCart:
+    handler: src/cart/get_cart.handler
+    events:
+      - httpApi:
+          method: GET
+          path: /cart
+          authorizer:
+            name: jwtAuthorizer
 
-  # updateCart:
-  #   handler: src/cart/update_cart.handler
-  #   events:
-  #     - httpApi:
-  #         method: PATCH
-  #         path: /cart
-  #         authorizer:
-  #           name: jwtAuthorizer
+  updateCart:
+    handler: src/cart/update_cart.handler
+    events:
+      - httpApi:
+          method: PATCH
+          path: /cart
+          authorizer:
+            name: jwtAuthorizer
 
   # #checkout
   # checkout:
