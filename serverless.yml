@@ -23,8 +23,8 @@ provider:
         - ClientId
     USER_POOL_ID:
       Ref: userPool
-    PRODUCTS_TABLE:
-      Ref: productTable
+    E_COMMERCE_TABLE:
+      Ref: eCommerceTable
     PRODUCTS_DOMAIN_ENDPOINT:
       Fn::GetAtt:
         - productsSearchDomain
@@ -126,34 +126,43 @@ functions:
       - stream:
           type: dynamodb
           arn:
-            Fn::GetAtt: [productTable, StreamArn]
+            Fn::GetAtt: [eCommerceTable, StreamArn]
 
   #internal test query
   testQuery:
     handler: src/functions/opensearch/test_query.handler
 
   #cart
-  # getCart:
-  #   handler: src/cart/get_cart.handler
-  #   events:
-  #     - httpApi:
-  #         method: GET
-  #         path: /cart/{id}
-  #         authorizer:
-  #           name: jwtAuthorizer
+  getCart:
+    handler: src/routes/cart/get_cart.handler
+    events:
+      - httpApi:
+          method: GET
+          path: /cart
+          authorizer:
+            name: jwtAuthorizer
 
-  # updateCart:
-  #   handler: src/cart/update_cart.handler
-  #   events:
-  #     - httpApi:
-  #         method: PATCH
-  #         path: /cart
-  #         authorizer:
-  #           name: jwtAuthorizer
+  addItemToCart:
+    handler: src/routes/cart/add.handler
+    events:
+      - httpApi:
+          method: POST
+          path: /cart/{productId}
+          authorizer:
+            name: jwtAuthorizer
+
+  removeItemFromCart:
+    handler: src/routes/cart/remove.handler
+    events:
+      - httpApi:
+          method: DELETE
+          path: /cart/{productId}
+          authorizer:
+            name: jwtAuthorizer
 
   # #checkout
   # checkout:
-  #   handler: src/checkout/checkout.handler
+  #   handler: src/routes/checkout/checkout.handler
   #   events:
   #     - httpApi:
   #         path: /checkout

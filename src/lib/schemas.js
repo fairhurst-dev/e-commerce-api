@@ -29,6 +29,11 @@ export const newProductSchema = baseProductSchema.keys({
   id: Joi.string().default(randomUUID()),
 });
 
-export const updateProductSchema = baseProductSchema.keys({
+export const completeProductSchema = baseProductSchema.keys({
   id: Joi.string().required(),
+});
+
+export const cartItemSchema = completeProductSchema.keys({
+  quantity: Joi.number().integer().min(1).required(),
+  userUUID: Joi.string().required(),
 });

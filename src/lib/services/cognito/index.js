@@ -21,7 +21,7 @@ const signUpCommand = (opts) => new SignUpCommand(opts);
 const initiateAuthCommand = (opts) => new InitiateAuthCommand(opts);
 const confirmSignUpCommand = (opts) => new ConfirmSignUpCommand(opts);
 
-export const signup = pipe(makeSignupInput, signUpCommand, cognitoClient.send);
+export const signup = pipe(makeSignupInput, signUpCommand, send);
 
 export const login = pipe(
   makeLoginInput,

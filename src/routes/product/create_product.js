@@ -5,26 +5,28 @@ import { upsertProduct } from "#lib/services/dynamodb/index.js";
 import { newProductValidator } from "#lib/validators.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 
-const createProductHandler = async (event) => {
+export const handler = async (event) => {
+  console.log("HERE?");
   //TODO: rewrite these functionally?
 
   const body = prop("body", event);
   try {
+    console.log("event", event);
     const isAdmin = getIsAdmin(event);
 
     if (!isAdmin) {
       return {
         statusCode: 401,
-        body: JSON.stringify({ message: "Unauthorized" }),
+        body: JSON.stringify({ message: "Unauthor" }),
       };
     }
 
-    const payload = newProductValidator(body);
+    const payload = newProductValidator(JSON.parse(body));
 
     const product = await upsertProduct(payload);
     return {
       statusCode: 200,
-      body: JSON.stringify({ body: product, message: "Product created" }),
+      body: JSON.stringify(product),
     };
   } catch (error) {
     console.error(error);
@@ -35,4 +37,4 @@ const createProductHandler = async (event) => {
   }
 };
 
-export const handler = middyfy(createProductHandler).use(httpJsonBodyParser());
+//export const handler = middyfy(createProductHandler).use(httpJsonBodyParser());

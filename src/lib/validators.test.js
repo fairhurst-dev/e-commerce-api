@@ -4,9 +4,15 @@ import {
   refreshValidator,
   newProductValidator,
   updateProductValidator,
+  cartItemValidator,
 } from "./validators.js";
 import { describe, it } from "node:test";
 import assert from "node:assert";
+import {
+  newProductSample,
+  completeProductSample,
+  cartItemSample,
+} from "#lib/samples/domain.js";
 
 describe("validators", () => {
   describe("login", () => {
@@ -51,44 +57,46 @@ describe("validators", () => {
   });
   describe("product", () => {
     it("generates an id", () => {
-      const product = newProductValidator({
-        name: "product",
-        description: "description",
-        price: 1,
-        msrp: 2,
-        stock: 3,
-        categories: ["category"],
-        sku: "test-sku",
-      });
+      const product = newProductValidator(newProductSample);
       assert.ok(product.id);
     });
-  });
-  it("product categories", () => {
-    const product = updateProductValidator({
-      name: "product",
-      description: "description",
-      price: 1,
-      msrp: 2,
-      stock: 3,
-      id: "1b4e28ba-2fa1-11d2-883f-0016d3cca427",
-      sku: "test-sku",
+    it("product categories", () => {
+      const product = updateProductValidator(completeProductSample);
+      assert.deepStrictEqual(product.categories, []);
     });
-    assert.deepStrictEqual(product.categories, []);
+    it("must have a name", () => {
+      assert.throws(() => {
+        refreshValidator({
+          description: "description",
+          price: 1,
+          msrp: 2,
+          stock: 3,
+          id: "1b4e28ba-2fa1-11d2-883f-0016d3cca427",
+          sku: "test-sku",
+        }),
+          {
+            name: "Error",
+            message: '"name" is not allowed to be empty',
+          };
+      });
+    });
   });
-  it("must have a name", () => {
-    assert.throws(() => {
-      refreshValidator({
-        description: "description",
-        price: 1,
-        msrp: 2,
-        stock: 3,
-        id: "1b4e28ba-2fa1-11d2-883f-0016d3cca427",
-        sku: "test-sku",
-      }),
-        {
-          name: "Error",
-          message: '"name" is not allowed to be empty',
-        };
+  describe("cart", () => {
+    it("valid cart item", () => {
+      const cartItem = cartItemValidator(cartItemSample);
+      assert.ok(cartItem);
+    });
+    it("must have user id", () => {
+      delete cartItemSample.userUUID;
+      assert.throws(() => {
+        cartItemValidator(cartItemSample);
+      });
+    });
+    it("must have quantity", () => {
+      delete cartItemSample.quantity;
+      assert.throws(() => {
+        cartItemValidator(cartItemSample);
+      });
     });
   });
 });

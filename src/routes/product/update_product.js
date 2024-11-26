@@ -32,7 +32,7 @@ const createProductsHandler = async (event) => {
     const product = await upsertProduct(payload);
     return {
       statusCode: 200,
-      body: JSON.stringify({ body: product, message: "Product updated" }),
+      body: JSON.stringify(product),
     };
   } catch (error) {
     console.error(error);
