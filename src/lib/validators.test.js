@@ -4,6 +4,7 @@ import {
   refreshValidator,
   newProductValidator,
   updateProductValidator,
+  cartValidator,
 } from "./validators.js";
 import { describe, it } from "node:test";
 import assert from "node:assert";
@@ -62,33 +63,51 @@ describe("validators", () => {
       });
       assert.ok(product.id);
     });
-  });
-  it("product categories", () => {
-    const product = updateProductValidator({
-      name: "product",
-      description: "description",
-      price: 1,
-      msrp: 2,
-      stock: 3,
-      id: "1b4e28ba-2fa1-11d2-883f-0016d3cca427",
-      sku: "test-sku",
-    });
-    assert.deepStrictEqual(product.categories, []);
-  });
-  it("must have a name", () => {
-    assert.throws(() => {
-      refreshValidator({
+    it("product categories", () => {
+      const product = updateProductValidator({
+        name: "product",
         description: "description",
         price: 1,
         msrp: 2,
         stock: 3,
         id: "1b4e28ba-2fa1-11d2-883f-0016d3cca427",
         sku: "test-sku",
-      }),
-        {
-          name: "Error",
-          message: '"name" is not allowed to be empty',
-        };
+      });
+      assert.deepStrictEqual(product.categories, []);
+    });
+    it("must have a name", () => {
+      assert.throws(() => {
+        refreshValidator({
+          description: "description",
+          price: 1,
+          msrp: 2,
+          stock: 3,
+          id: "1b4e28ba-2fa1-11d2-883f-0016d3cca427",
+          sku: "test-sku",
+        }),
+          {
+            name: "Error",
+            message: '"name" is not allowed to be empty',
+          };
+      });
+    });
+  });
+  describe("cart", () => {
+    it("valid cart", () => {
+      const cart = cartValidator({
+        userId: "1b4e28ba-2fa1-11d2-883f-0016d3cca427",
+      });
+      assert.deepStrictEqual(cart.items, []);
+    });
+    it("must have user id", () => {
+      assert.throws(() => {
+        cartValidator({ items: [] });
+      });
+    });
+    it("must be valid cart items", () => {
+      assert.throws(() => {
+        cartValidator({ userId: "1234", items: [{ foo: "bar" }] });
+      });
     });
   });
 });
