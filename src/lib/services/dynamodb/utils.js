@@ -1,19 +1,44 @@
-import { applySpec, assoc, identity, pipe } from "ramda";
+import { applySpec, assoc, concat, identity, pipe } from "ramda";
 
-const formatTableName = assoc("TableName", process.env.PRODUCTS_TABLE);
+const addTableName = assoc("TableName", process.env.PRODUCTS_TABLE);
 
-export const makeUpsertProductInput = pipe(
+const formatProductKey = concat("PRODUCT#");
+const formatCartKey = concat("CART#");
+
+const formatProductRecord = (product) => ({
+  ...product,
+  PK: formatProductKey(product.id),
+});
+
+const formatCartRecord = (cart) => ({
+  ...cart,
+  PK: formatCartKey(cart.id),
+});
+
+const baseUpsertRecordInput = pipe(
   applySpec({
     Item: identity,
   }),
-  formatTableName
+  addTableName
 );
 
-export const makeGetProductInput = pipe(
+const baseGetRecordInput = pipe(
   applySpec({
     Key: {
-      id: identity,
+      PK: identity,
     },
   }),
-  formatTableName
+  addTableName
 );
+
+export const makeUpsertCartInput = pipe(
+  formatCartRecord,
+  baseUpsertRecordInput
+);
+export const makeUpsertProductInput = pipe(
+  formatProductRecord,
+  baseUpsertRecordInput
+);
+
+export const makeGetProductInput = pipe(formatProductKey, baseGetRecordInput);
+export const makeGetCartInput = pipe(formatCartKey, baseGetRecordInput);
