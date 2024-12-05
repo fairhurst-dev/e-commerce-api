@@ -1,14 +1,11 @@
 import { middyfy } from "#lib/middleware.js";
-import { path } from "ramda";
 import { getCart } from "#lib/services/dynamodb/index.js";
+import { getUserUUID } from "#lib/authorizer.js";
 
 const getCartHandler = async (event) => {
   console.log("my  event is ", event);
   try {
-    const uuid = path(
-      ["requestContext", "authorizer", "jwt", "claims", "username"],
-      event
-    );
+    const uuid = getUserUUID(event);
 
     if (!uuid) {
       return {
@@ -18,13 +15,6 @@ const getCartHandler = async (event) => {
     }
 
     const cart = await getCart(uuid);
-
-    if (!cart) {
-      return {
-        statusCode: 404,
-        body: JSON.stringify({ message: "Cart not found" }),
-      };
-    }
 
     return {
       statusCode: 200,

@@ -142,12 +142,21 @@ functions:
           authorizer:
             name: jwtAuthorizer
 
-  updateCart:
-    handler: src/routes/cart/update_cart.handler
+  addItemToCart:
+    handler: src/routes/cart/add.handler
     events:
       - httpApi:
-          method: PATCH
-          path: /cart
+          method: POST
+          path: /cart/{productId}
+          authorizer:
+            name: jwtAuthorizer
+
+  removeItemFromCart:
+    handler: src/routes/cart/remove.handler
+    events:
+      - httpApi:
+          method: DELETE
+          path: /cart/{productId}
           authorizer:
             name: jwtAuthorizer
 

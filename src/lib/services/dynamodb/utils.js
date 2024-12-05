@@ -1,18 +1,42 @@
-import { applySpec, assoc, concat, identity, pipe } from "ramda";
+import {
+  applySpec,
+  assoc,
+  concat,
+  identity,
+  pipe,
+  always,
+  prop,
+  propOr,
+} from "ramda";
 
 const addTableName = assoc("TableName", process.env.PRODUCTS_TABLE);
 
-const formatProductKey = concat("PRODUCT#");
-const formatCartKey = concat("CART#");
+//keys
+
+const addProductPrefix = concat("PRODUCT#");
+const addUserPrefix = concat("USER#");
+const addBasePrefix = always("#");
+
+const formatProductKey = applySpec({
+  PK: pipe(propOr(identity, "id"), addProductPrefix),
+  SK: addBasePrefix,
+});
+
+const formatCartKey = applySpec({
+  PK: pipe(prop("userUUID"), addUserPrefix),
+  SK: pipe(prop("id"), addProductPrefix),
+});
+
+//records
 
 const formatProductRecord = (product) => ({
   ...product,
-  PK: formatProductKey(product.id),
+  ...formatProductKey(product),
 });
 
-const formatCartRecord = (cart) => ({
-  ...cart,
-  PK: formatCartKey(cart.id),
+const formatCartItemRecord = (cartItem) => ({
+  ...cartItem,
+  ...formatCartKey(cartItem),
 });
 
 const baseUpsertRecordInput = pipe(
@@ -25,20 +49,36 @@ const baseUpsertRecordInput = pipe(
 const baseGetRecordInput = pipe(
   applySpec({
     Key: {
-      PK: identity,
+      PK: prop("PK"),
+      SK: prop("SK"),
     },
   }),
   addTableName
 );
 
-export const makeUpsertCartInput = pipe(
-  formatCartRecord,
+//queries
+const formatCartQuery = applySpec({
+  KeyConditionExpression: always("PK = :pk and SK BEGINS_WITH :sk"),
+  ExpressionAttributeValues: {
+    ":pk": addUserPrefix,
+    ":sk": addProductPrefix,
+  },
+});
+
+//exports
+
+export const makeUpsertCartItemInput = pipe(
+  formatCartItemRecord,
   baseUpsertRecordInput
 );
+
+export const makeDeleteCartItemInput = {};
+
 export const makeUpsertProductInput = pipe(
   formatProductRecord,
   baseUpsertRecordInput
 );
 
 export const makeGetProductInput = pipe(formatProductKey, baseGetRecordInput);
-export const makeGetCartInput = pipe(formatCartKey, baseGetRecordInput);
+
+export const makeGetCartInput = pipe(formatCartQuery, addTableName);
