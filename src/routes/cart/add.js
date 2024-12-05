@@ -3,14 +3,16 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { getUserUUID } from "#lib/authorizer.js";
 import { getProduct } from "#lib/services/dynamodb/index.js";
 import { path } from "ramda";
-import { getCart, upsertCartItem } from "#lib/services/dynamodb/index.js";
+import { upsertCartItem } from "#lib/services/dynamodb/index.js";
+import { cartItemValidator } from "#lib/validators.js";
 
-const updateCartHandler = async (event) => {
+const addCartItemHandler = async (event) => {
   try {
-    const uuid = getUserUUID(event);
+    const userUUID = getUserUUID(event);
     const productId = path(["pathParameters", "productId"], event);
+    const quantity = path(["body", "quantity"], event);
 
-    if (!uuid) {
+    if (!userUUID) {
       return {
         statusCode: 401,
         body: JSON.stringify({ message: "Unauthorized" }),
@@ -26,7 +28,13 @@ const updateCartHandler = async (event) => {
       };
     }
 
-    const updatedCart = await upsertCartItem({ ...product, userUUID: uuid });
+    const payload = cartItemValidator({
+      ...product,
+      quantity,
+      userUUID,
+    });
+
+    const updatedCart = await upsertCartItem(payload);
 
     return {
       statusCode: 200,
@@ -41,4 +49,4 @@ const updateCartHandler = async (event) => {
   }
 };
 
-export const handler = middyfy(updateCartHandler).use(httpJsonBodyParser());
+export const handler = middyfy(addCartItemHandler).use(httpJsonBodyParser());

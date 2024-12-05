@@ -5,6 +5,7 @@ import {
   makeGetProductInput,
   makeGetCartInput,
   makeUpsertCartItemInput,
+  makeGetCartItemInput,
 } from "./utils.js";
 import { transformCartForClient } from "#lib/transformers.js";
 import { andThen, prop, pipe, tap } from "ramda";
@@ -19,6 +20,12 @@ const query = (params) => docClient.query(params);
 
 export const getProduct = pipe(
   makeGetProductInput,
+  get,
+  andThen(pipe(tap(console.log), prop("Item")))
+);
+
+export const getCartItem = pipe(
+  makeGetCartItemInput,
   get,
   andThen(pipe(tap(console.log), prop("Item")))
 );
@@ -42,7 +49,7 @@ export const upsertCartItem = pipe(
 );
 
 export const deleteCartItem = pipe(
-  makeDeleteCartItemInput,
+  makeGetCartItemInput,
   remove,
   andThen(pipe(tap(console.log), prop("Attributes")))
 );

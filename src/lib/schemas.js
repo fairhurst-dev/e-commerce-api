@@ -33,7 +33,7 @@ export const completeProductSchema = baseProductSchema.keys({
   id: Joi.string().required(),
 });
 
-export const cartSchema = Joi.object({
-  userId: Joi.string().required(),
-  items: Joi.array().items(completeProductSchema).default([]),
+export const cartItemSchema = completeProductSchema.keys({
+  quantity: Joi.number().integer().min(1).required(),
+  userUUID: Joi.string().required(),
 });
