@@ -10,7 +10,7 @@
   },
   "type": "module",
   "scripts": {
-    "test": "USER_POOL_CLIENT_ID=client123 USER_POOL_ID=pool123 PRODUCTS_TABLE=products-test-table node --test --test-reporter spec",
+    "test": "USER_POOL_CLIENT_ID=client123 USER_POOL_ID=pool123 E_COMMERCE_TABLE=e-commerce-test-table node --test --test-reporter spec",
     "dev": "node --test --watch",
     "build": "npx sls package",
     "lint": "npx eslint"

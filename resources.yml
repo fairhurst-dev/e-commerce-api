@@ -35,10 +35,10 @@ Resources:
         - ALLOW_USER_PASSWORD_AUTH
         - ALLOW_REFRESH_TOKEN_AUTH
       GenerateSecret: false
-  productTable:
+  eCommerceTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: ${self:service}-${sls:stage}-product
+      TableName: ${self:service}-${sls:stage}
       AttributeDefinitions:
         - AttributeName: PK
           AttributeType: S
@@ -56,6 +56,8 @@ Resources:
               KeyType: "HASH"
             - AttributeName: "PK"
               KeyType: "RANGE"
+          Projection:
+            ProjectionType: "ALL"
       BillingMode: PAY_PER_REQUEST
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES

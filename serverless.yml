@@ -23,8 +23,8 @@ provider:
         - ClientId
     USER_POOL_ID:
       Ref: userPool
-    PRODUCTS_TABLE:
-      Ref: productTable
+    E_COMMERCE_TABLE:
+      Ref: eCommerceTable
     PRODUCTS_COLLECTION_ENDPOINT:
       Fn::GetAtt:
         - productsSearchCollection

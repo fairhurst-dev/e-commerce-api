@@ -5,7 +5,7 @@ import {
   refreshSchema,
   newProductSchema,
   completeProductSchema,
-  cartSchema,
+  cartItemSchema,
 } from "#lib/schemas.js";
 
 const joiDefaults = {
@@ -32,4 +32,4 @@ export const newProductValidator = baseValidator(newProductSchema);
 
 export const updateProductValidator = baseValidator(completeProductSchema);
 
-export const cartValidator = baseValidator(cartSchema);
+export const cartItemValidator = baseValidator(cartItemSchema);
