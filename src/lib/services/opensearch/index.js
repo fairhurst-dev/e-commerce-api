@@ -7,6 +7,7 @@ import {
   formatQueryRespForClient,
   makeClient,
   formatCategoryQuery,
+  formatTestQuery,
 } from "./utils.js";
 
 const client = makeClient();
@@ -51,3 +52,5 @@ export const getProductsByCategories = pipe(
   search,
   andThen(pipe(tap(console.log), formatQueryRespForClient))
 );
+
+export const testQuery = pipe(formatTestQuery, tap(console.log), search);
