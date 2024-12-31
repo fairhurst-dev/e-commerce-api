@@ -25,10 +25,10 @@ provider:
       Ref: userPool
     PRODUCTS_TABLE:
       Ref: productTable
-    PRODUCTS_COLLECTION_ENDPOINT:
+    PRODUCTS_DOMAIN_ENDPOINT:
       Fn::GetAtt:
-        - productsSearchCollection
-        - CollectionEndpoint
+        - productsSearchDomain
+        - DomainEndpoint
   logRetentionInDays: 30
   httpApi:
     metrics: true
@@ -127,6 +127,10 @@ functions:
           type: dynamodb
           arn:
             Fn::GetAtt: [productTable, StreamArn]
+
+  #internal test query
+  testQuery:
+    handler: src/functions/opensearch/test_query.handler
 
   #cart
   # getCart:
