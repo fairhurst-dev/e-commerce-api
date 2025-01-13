@@ -36,4 +36,5 @@ export const completeProductSchema = baseProductSchema.keys({
 export const cartItemSchema = completeProductSchema.keys({
   quantity: Joi.number().integer().min(1).required(),
   userUUID: Joi.string().required(),
+  orderUUID: Joi.string(),
 });
