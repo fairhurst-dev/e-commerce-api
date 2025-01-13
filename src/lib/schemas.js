@@ -18,8 +18,8 @@ export const refreshSchema = Joi.object({
 const baseProductSchema = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().required(),
-  price: Joi.number().precision(2).min(0).required(),
-  msrp: Joi.number().precision(2).min(0).required(),
+  price: Joi.number().min(0).required(),
+  msrp: Joi.number().min(0).required(),
   stock: Joi.number().integer().min(0).required().default(0),
   categories: Joi.array().items(Joi.string()).default([]),
   sku: Joi.string().required(),
@@ -36,4 +36,5 @@ export const completeProductSchema = baseProductSchema.keys({
 export const cartItemSchema = completeProductSchema.keys({
   quantity: Joi.number().integer().min(1).required(),
   userUUID: Joi.string().required(),
+  cartUUID: Joi.string(),
 });

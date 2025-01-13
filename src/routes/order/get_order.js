@@ -1,12 +1,12 @@
 import { middyfy } from "#lib/middleware.js";
 import { getUserUUID } from "#lib/authorizer.js";
+import { getOrder } from "#lib/services/dynamodb/index.js";
 import { path } from "ramda";
-import { getCartItem, deleteCartItem } from "#lib/services/dynamodb/index.js";
 
-export const removeCartItemHandler = async (event) => {
+export const getOrderHandler = async (event) => {
   try {
     const userUUID = getUserUUID(event);
-    const productId = path(["pathParameters", "productId"], event);
+    const cartUUID = path(["pathParameters", "cartUUID"], event);
 
     if (!userUUID) {
       return {
@@ -15,25 +15,21 @@ export const removeCartItemHandler = async (event) => {
       };
     }
 
-    const payload = {
+    const order = await getOrder({
       userUUID,
-      id: productId,
-    };
+      cartUUID,
+    });
 
-    const cartItem = await getCartItem(payload);
-
-    if (!cartItem) {
+    if (!order) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ message: "Cart Item not found" }),
+        body: JSON.stringify({ message: "order not found" }),
       };
     }
 
-    await deleteCartItem(payload);
-
     return {
       statusCode: 200,
-      body: JSON.stringify(true),
+      body: JSON.stringify(order),
     };
   } catch (error) {
     console.error(error);
@@ -44,4 +40,4 @@ export const removeCartItemHandler = async (event) => {
   }
 };
 
-export const handler = middyfy(removeCartItemHandler);
+export const handler = middyfy(getOrderHandler);

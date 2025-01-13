@@ -6,7 +6,7 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 
 const refreshHandler = async (event) => {
   const refreshToken = path(["body", "refreshToken"], event);
-  const deviceKey = path(["body", "deviceKey"], event); //TODO: Where is this
+  const deviceKey = path(["body", "deviceKey"], event);
   try {
     const payload = refreshValidator({ refreshToken, deviceKey });
 

@@ -3,9 +3,7 @@ import { path } from "ramda";
 import { getProductsByCategories } from "#lib/services/opensearch/index.js";
 
 const searchProductsHandler = async (event) => {
-  console.log("event", event);
   const qsp = path(["queryStringParameters", "categories"], event);
-  console.log("qsp", qsp);
   if (!qsp) {
     return {
       statusCode: 400,
