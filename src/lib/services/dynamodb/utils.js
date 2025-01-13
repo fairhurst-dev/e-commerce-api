@@ -105,6 +105,14 @@ const formatCartQuery = applySpec({
   },
 });
 
+const formatOrdersQuery = applySpec({
+  KeyConditionExpression: always("PK = :pk and begins_with(SK, :sk)"),
+  ExpressionAttributeValues: {
+    ":pk": addUserPrefix,
+    ":sk": always(ORDER_PREFIX),
+  },
+});
+
 //exports
 
 export const makeGetCartInput = pipe(formatCartQuery, addTableName);
@@ -119,6 +127,8 @@ export const makeUpsertCartItemInput = pipe(
 export const makeGetProductInput = pipe(formatProductKey, baseGetRecordInput);
 
 export const makeGetOrderInput = pipe(formatGerOrderKey, baseGetRecordInput);
+
+export const makeGetOrdersInput = pipe(formatOrdersQuery, addTableName);
 
 export const makeUpsertProductInput = pipe(
   formatProductRecord,

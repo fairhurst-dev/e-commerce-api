@@ -4,7 +4,7 @@ export const makePaymentIntentFromCart = applySpec({
   amount: prop("total"),
   currency: always("usd"),
   metadata: applySpec({
-    orderUUID: prop("orderUUID"),
+    orderUUID: prop("cartUUID"),
     userUUID: prop("userUUID"),
   }),
 });

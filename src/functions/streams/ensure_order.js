@@ -1,6 +1,6 @@
 import { path, pipe } from "ramda";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
-import { upsertOrder } from "#lib/services/dynamodb/index.js";
+import { ensureOrder } from "#lib/services/dynamodb/index.js";
 
 const unmarshallProduct = pipe(path(["dynamodb", "NewImage"]), unmarshall);
 
@@ -9,7 +9,7 @@ export const handler = async (event) => {
     try {
       const unmarshalled = unmarshallProduct(record);
       if (unmarshalled.SK.includes("CART#ITEM")) {
-        await upsertOrder(unmarshalled);
+        await ensureOrder(unmarshalled);
       } else {
         console.log("Not a cart update");
       }

@@ -35,7 +35,7 @@ const calculateTotalPrice = pipe(
   toCents
 );
 
-export const scrubKeys = omit(["PK", "SK"]);
+export const scrubKeys = omit(["PK", "SK", "GSI1PK"]);
 
 export const transformCartForClient = (items) => {
   if (!items.length) {

@@ -1,13 +1,11 @@
 import { middyfy } from "#lib/middleware.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { getUserUUID } from "#lib/authorizer.js";
-import { getOrder } from "#lib/services/dynamodb/index.js";
-import { path } from "ramda";
+import { getOrders } from "#lib/services/dynamodb/index.js";
 
 export const handler = async (event) => {
   try {
     const userUUID = getUserUUID(event);
-    const orderUUID = path(["pathParameters", "orderUUID"], event);
 
     if (!userUUID) {
       return {
@@ -16,21 +14,11 @@ export const handler = async (event) => {
       };
     }
 
-    const order = await getOrder({
-      userUUID,
-      orderUUID,
-    });
-
-    if (!order) {
-      return {
-        statusCode: 404,
-        body: JSON.stringify({ message: "order not found" }),
-      };
-    }
+    const orders = await getOrders(userUUID);
 
     return {
       statusCode: 200,
-      body: JSON.stringify(order),
+      body: JSON.stringify(orders),
     };
   } catch (error) {
     console.error(error);

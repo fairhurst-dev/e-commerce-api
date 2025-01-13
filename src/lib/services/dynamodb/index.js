@@ -7,6 +7,7 @@ import {
   makeUpsertCartItemInput,
   makeGetCartItemInput,
   makeGetOrderInput,
+  makeGetOrdersInput,
   makeUpsertOrderInput,
   makeUpsertCartInput,
 } from "./utils.js";
@@ -47,7 +48,13 @@ export const getCart = pipe(
 export const getOrder = pipe(
   makeGetOrderInput,
   get,
-  andThen(pipe(tap(console.log), prop("Item")))
+  andThen(pipe(tap(console.log), prop("Item"), scrubKeys))
+);
+
+export const getOrders = pipe(
+  makeGetOrdersInput,
+  query,
+  andThen(pipe(tap(console.log), pipe(prop("Items"), map(scrubKeys))))
 );
 
 export const checkout = {
@@ -105,7 +112,7 @@ const createOrder = async (cart) => {
   return put(orderInput);
 };
 
-export const upsertOrder = async (cartItem) => {
+export const ensureOrder = async (cartItem) => {
   const cart = await getCart(cartItem.userUUID);
   const order = await getOrder({
     orderUUID: cart.cartUUID,
