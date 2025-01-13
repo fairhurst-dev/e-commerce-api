@@ -1,14 +1,12 @@
 import { middyfy } from "#lib/middleware.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { getUserUUID } from "#lib/authorizer.js";
-import { getProduct } from "#lib/services/dynamodb/index.js";
+import { getProduct, upsertCartItem } from "#lib/services/dynamodb/index.js";
 import { path } from "ramda";
-import { upsertCartItem } from "#lib/services/dynamodb/index.js";
 import { cartItemValidator } from "#lib/validators.js";
 
 export const handler = async (event) => {
   try {
-    console.log(event);
     const userUUID = getUserUUID(event);
     const productId = path(["pathParameters", "productId"], event);
     const e = { body: JSON.parse(event.body) };
@@ -24,7 +22,7 @@ export const handler = async (event) => {
 
     const product = await getProduct(productId);
 
-    console.log("fetched priduct", product);
+    console.log("fetched product", product);
 
     if (!product) {
       return {
@@ -39,11 +37,11 @@ export const handler = async (event) => {
       userUUID,
     });
 
-    const updatedCart = await upsertCartItem(payload);
+    const cart = await upsertCartItem(payload);
 
     return {
       statusCode: 200,
-      body: JSON.stringify(updatedCart),
+      body: JSON.stringify(cart),
     };
   } catch (error) {
     console.error(error);

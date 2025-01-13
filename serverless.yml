@@ -81,6 +81,7 @@ functions:
           method: POST
           path: /auth/refresh
 
+  #products
   createProduct:
     handler: src/routes/product/create_product.handler
     events:
@@ -121,7 +122,15 @@ functions:
           path: /categories/product
 
   indexProductToSearch:
-    handler: src/functions/opensearch/index_product_to_search.handler
+    handler: src/functions/streams/index_product_to_search.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt: [eCommerceTable, StreamArn]
+
+  ensureOrder:
+    handler: src/functions/streams/ensure_order.handler
     events:
       - stream:
           type: dynamodb
@@ -160,15 +169,34 @@ functions:
           authorizer:
             name: jwtAuthorizer
 
-  # #checkout
-  # checkout:
-  #   handler: src/routes/checkout/checkout.handler
-  #   events:
-  #     - httpApi:
-  #         path: /checkout
-  #         method: POST
-  #          authorizer:
-  #            name: jwtAuthorizer
+  #checkout
+  checkout:
+    handler: src/routes/checkout/checkout.handler
+    events:
+      - httpApi:
+          path: /checkout
+          method: POST
+          authorizer:
+            name: jwtAuthorizer
+
+  # #orders
+  getOrder:
+    handler: src/routes/order/get_order.handler
+    events:
+      - httpApi:
+          path: /order/{orderUUID}
+          method: GET
+          authorizer:
+            name: jwtAuthorizer
+
+  getOrders:
+    handler: src/routes/order/get_orders.handler
+    events:
+      - httpApi:
+          path: /orders
+          method: GET
+          authorizer:
+            name: jwtAuthorizer
 
   #Internal functions
   createIndex:

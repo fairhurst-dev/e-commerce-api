@@ -39,7 +39,7 @@ describe("Dynamo utils", () => {
         KeyConditionExpression: "PK = :pk and begins_with(SK, :sk)",
         ExpressionAttributeValues: {
           ":pk": "USER#456",
-          ":sk": "PRODUCT#",
+          ":sk": "CART#",
         },
         TableName: process.env.E_COMMERCE_TABLE,
       });
@@ -64,6 +64,7 @@ describe("Dynamo utils", () => {
         Item: {
           PK: "USER#1b4e28ba-2fa1-11d2-883f-0016d3cca427",
           SK: "PRODUCT#1b4e28ba-2fa1-11d2-883f-0016d3cca427",
+          GSI1PK: "CART#3dd210bf-59df-438f-b50c-2b1dcd08d8b5",
           ...cartItemSample,
         },
         TableName: process.env.E_COMMERCE_TABLE,

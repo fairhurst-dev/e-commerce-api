@@ -22,4 +22,5 @@ export const cartItemSample = {
   ...completeProductSample,
   quantity: 3,
   userUUID: "1b4e28ba-2fa1-11d2-883f-0016d3cca427",
+  orderUUID: "3dd210bf-59df-438f-b50c-2b1dcd08d8b5",
 };
