@@ -1,4 +1,4 @@
-import { andThen, pipe, tap } from "ramda";
+import { andThen, pipe } from "ramda";
 import {
   formatCreateIndexPayload,
   formatIndexRecordPayload,
@@ -21,36 +21,27 @@ const putMapping = async (body) => client.indices.putMapping(body);
 
 export const updateProductIndexMappings = pipe(
   formatUpdateMappingPayload,
-  putMapping,
-  andThen(tap(console.log))
+  putMapping
 );
 
-export const createProductIndex = pipe(
-  formatCreateIndexPayload,
-  createIndex,
-  andThen(tap(console.log))
-);
+export const createProductIndex = pipe(formatCreateIndexPayload, createIndex);
 
 //records
 
-export const indexProduct = pipe(
-  formatIndexRecordPayload,
-  index,
-  andThen(tap(console.log))
-);
+export const indexProduct = pipe(formatIndexRecordPayload, index);
 
 //queries
 
 export const searchProducts = pipe(
   formatQuery,
   search,
-  andThen(pipe(tap(console.log), formatQueryRespForClient))
+  andThen(formatQueryRespForClient)
 );
 
 export const getProductsByCategories = pipe(
   formatCategoryQuery,
   search,
-  andThen(pipe(tap(console.log), formatQueryRespForClient))
+  andThen(formatQueryRespForClient)
 );
 
-export const testQuery = pipe(formatTestQuery, tap(console.log), search);
+export const testQuery = pipe(formatTestQuery, search);

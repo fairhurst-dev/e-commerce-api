@@ -1,23 +1,24 @@
 import { middyfy } from "#lib/middleware.js";
-import { getCart } from "#lib/services/dynamodb/index.js";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { getUserUUID } from "#lib/authorizer.js";
+import { getOrders } from "#lib/services/dynamodb/index.js";
 
-export const getCartHandler = async (event) => {
+export const getOrderHandler = async (event) => {
   try {
-    const uuid = getUserUUID(event);
+    const userUUID = getUserUUID(event);
 
-    if (!uuid) {
+    if (!userUUID) {
       return {
         statusCode: 401,
         body: JSON.stringify({ message: "Unauthorized" }),
       };
     }
 
-    const cart = await getCart(uuid);
+    const orders = await getOrders(userUUID);
 
     return {
       statusCode: 200,
-      body: JSON.stringify(cart),
+      body: JSON.stringify(orders),
     };
   } catch (error) {
     console.error(error);
@@ -28,4 +29,4 @@ export const getCartHandler = async (event) => {
   }
 };
 
-export const handler = middyfy(getCartHandler);
+export const handler = middyfy(getOrderHandler);

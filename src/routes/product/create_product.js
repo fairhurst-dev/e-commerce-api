@@ -1,23 +1,19 @@
 import { middyfy } from "#lib/middleware.js";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { prop } from "ramda";
 import { getIsAdmin } from "#lib/authorizer.js";
 import { upsertProduct } from "#lib/services/dynamodb/index.js";
 import { newProductValidator } from "#lib/validators.js";
-import httpJsonBodyParser from "@middy/http-json-body-parser";
 
-export const handler = async (event) => {
-  console.log("HERE?");
-  //TODO: rewrite these functionally?
-
+export const createProductHandler = async (event) => {
   const body = prop("body", event);
   try {
-    console.log("event", event);
     const isAdmin = getIsAdmin(event);
 
     if (!isAdmin) {
       return {
         statusCode: 401,
-        body: JSON.stringify({ message: "Unauthor" }),
+        body: JSON.stringify({ message: "Unauthorized" }),
       };
     }
 
@@ -37,4 +33,4 @@ export const handler = async (event) => {
   }
 };
 
-//export const handler = middyfy(createProductHandler).use(httpJsonBodyParser());
+export const handler = middyfy(createProductHandler).use(httpJsonBodyParser());

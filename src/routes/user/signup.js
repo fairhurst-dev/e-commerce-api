@@ -4,17 +4,11 @@ import { userValidator } from "#lib/validators.js";
 import { middyfy } from "#lib/middleware.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 
-//TODO: functional handler refactor
-
-export const handler = async (e) => {
-  console.log(JSON.parse(e.body));
-  const event = { body: JSON.parse(e.body) };
-  console.log(event);
+export const signupHandler = async (event) => {
   const email = path(["body", "email"], event);
   const password = path(["body", "password"], event);
   try {
     const payload = userValidator({ email, password });
-    console.log("PAYLOAD", payload);
     await signup(payload);
     return {
       statusCode: 200,
@@ -31,4 +25,4 @@ export const handler = async (e) => {
   }
 };
 
-//export const handler = middyfy(signupHandler).use(httpJsonBodyParser());
+export const handler = middyfy(signupHandler).use(httpJsonBodyParser());

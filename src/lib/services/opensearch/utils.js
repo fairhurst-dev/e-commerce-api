@@ -17,7 +17,6 @@ import { INDEX_NAME, PRODUCTS_MAPPINGS } from "./config.js";
 export const makeClient = () =>
   new Client({
     ...AwsSigv4Signer({
-      /*region: process.env.AWS_REGION,*/
       region: "us-east-1",
       service: "es",
       getCredentials: () => {

@@ -5,7 +5,7 @@ import { upsertProduct, getProduct } from "#lib/services/dynamodb/index.js";
 import { updateProductValidator } from "#lib/validators.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 
-const createProductsHandler = async (event) => {
+const updateProductsHandler = async (event) => {
   const eventBody = prop("body", event);
   const productId = path(["pathParameters", "id"], event);
   try {
@@ -43,4 +43,4 @@ const createProductsHandler = async (event) => {
   }
 };
 
-export const handler = middyfy(createProductsHandler).use(httpJsonBodyParser());
+export const handler = middyfy(updateProductsHandler).use(httpJsonBodyParser());

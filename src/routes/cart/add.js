@@ -1,19 +1,15 @@
 import { middyfy } from "#lib/middleware.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { getUserUUID } from "#lib/authorizer.js";
-import { getProduct } from "#lib/services/dynamodb/index.js";
+import { getProduct, upsertCartItem } from "#lib/services/dynamodb/index.js";
 import { path } from "ramda";
-import { upsertCartItem } from "#lib/services/dynamodb/index.js";
 import { cartItemValidator } from "#lib/validators.js";
 
-export const handler = async (event) => {
+export const addCartItemHandler = async (event) => {
   try {
-    console.log(event);
     const userUUID = getUserUUID(event);
     const productId = path(["pathParameters", "productId"], event);
-    const e = { body: JSON.parse(event.body) };
-
-    const quantity = path(["body", "quantity"], e);
+    const quantity = path(["body", "quantity"], event);
 
     if (!userUUID) {
       return {
@@ -23,8 +19,6 @@ export const handler = async (event) => {
     }
 
     const product = await getProduct(productId);
-
-    console.log("fetched priduct", product);
 
     if (!product) {
       return {
@@ -39,11 +33,11 @@ export const handler = async (event) => {
       userUUID,
     });
 
-    const updatedCart = await upsertCartItem(payload);
+    const cart = await upsertCartItem(payload);
 
     return {
       statusCode: 200,
-      body: JSON.stringify(updatedCart),
+      body: JSON.stringify(cart),
     };
   } catch (error) {
     console.error(error);
@@ -54,4 +48,4 @@ export const handler = async (event) => {
   }
 };
 
-//export const handler = middyfy(addCartItemHandler).use(httpJsonBodyParser());
+export const handler = middyfy(addCartItemHandler).use(httpJsonBodyParser());
