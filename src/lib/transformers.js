@@ -1,18 +1,15 @@
 import {
-  applySpec,
-  identity,
   pipe,
   curry,
   sum,
-  prop,
   concat,
-  assoc,
   pluck,
   multiply,
-  head,
-  ifElse,
-  has,
   omit,
+  length,
+  identity,
+  isNil,
+  ifElse,
 } from "ramda";
 
 const sumProp = curry((propName, items) => {
@@ -20,22 +17,16 @@ const sumProp = curry((propName, items) => {
 });
 
 const toDollars = (num) => num / 100;
-const toCents = (num) => num * 100;
 
-const calculateSubtotal = pipe(sumProp("price"), Math.round, toCents);
-const calculateCartQuantity = sumProp("quantity");
+const calculateSubtotal = pipe(sumProp("price"));
+const calculateTotalPrice = pipe(calculateSubtotal, multiply(1.07), Math.round);
+
+const calculateCartQuantity = length;
 
 const toFixedDecimals = (num) => num.toFixed(2);
 const formatPrice = pipe(toDollars, toFixedDecimals, concat("$"));
 
-const calculateTotalPrice = pipe(
-  calculateSubtotal,
-  multiply(1.07),
-  Math.round,
-  toCents
-);
-
-export const scrubKeys = omit(["PK", "SK", "GSI1PK"]);
+export const scrubKeys = ifElse(isNil, identity, omit(["PK", "SK", "GSI1PK"]));
 
 export const transformCartForClient = (items) => {
   if (!items.length) {
@@ -44,6 +35,8 @@ export const transformCartForClient = (items) => {
       subtotal: 0,
       total: 0,
       quantity: 0,
+      formattedSubtotal: "$0.00",
+      formattedTotal: "$0.00",
     };
   }
   const cartItems = [];

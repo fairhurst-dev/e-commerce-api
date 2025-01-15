@@ -23,6 +23,8 @@ const removeCartItemHandler = async (event) => {
 
     const cartItem = await getCartItem(payload);
 
+    console.log("my cart item", cartItem);
+
     if (!cartItem) {
       return {
         statusCode: 404,

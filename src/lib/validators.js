@@ -7,6 +7,7 @@ import {
   completeProductSchema,
   cartItemSchema,
 } from "#lib/schemas.js";
+import { decorateFormattedPrice } from "./decorators.js";
 
 const joiDefaults = {
   abortEarly: false,
@@ -30,6 +31,9 @@ export const refreshValidator = baseValidator(refreshSchema);
 
 export const newProductValidator = baseValidator(newProductSchema);
 
-export const updateProductValidator = baseValidator(completeProductSchema);
+export const updateProductValidator = pipe(
+  baseValidator(completeProductSchema),
+  decorateFormattedPrice
+);
 
 export const cartItemValidator = baseValidator(cartItemSchema);

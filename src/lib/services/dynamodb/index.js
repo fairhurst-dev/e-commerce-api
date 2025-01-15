@@ -94,11 +94,7 @@ export const upsertCartItem = async (input) => {
   )(input);
 };
 
-export const deleteCartItem = pipe(
-  makeGetCartItemInput,
-  remove,
-  andThen(pipe(tap(console.log), prop("Attributes")))
-);
+export const deleteCartItem = pipe(makeGetCartItemInput, remove);
 
 export const updateOrder = async (cart, order) => {
   const paymentIntent = await updatePaymentIntent(cart, order);
@@ -118,6 +114,7 @@ export const ensureOrder = async (cartItem) => {
     orderUUID: cart.cartUUID,
     userUUID: cart.userUUID,
   });
+  console.log("my order", order);
   if (!order) {
     return createOrder(cart);
   }

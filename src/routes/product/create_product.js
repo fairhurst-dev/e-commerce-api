@@ -6,9 +6,6 @@ import { newProductValidator } from "#lib/validators.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 
 export const handler = async (event) => {
-  console.log("HERE?");
-  //TODO: rewrite these functionally?
-
   const body = prop("body", event);
   try {
     console.log("event", event);
@@ -17,7 +14,7 @@ export const handler = async (event) => {
     if (!isAdmin) {
       return {
         statusCode: 401,
-        body: JSON.stringify({ message: "Unauthor" }),
+        body: JSON.stringify({ message: "Unauthorized" }),
       };
     }
 

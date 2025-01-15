@@ -53,7 +53,7 @@ describe("Dynamo utils", () => {
       assert.deepStrictEqual(actual, {
         Key: {
           PK: "USER#1b4e28ba-2fa1-11d2-883f-0016d3cca427",
-          SK: "PRODUCT#1b4e28ba-2fa1-11d2-883f-0016d3cca427",
+          SK: "CART#ITEM#1b4e28ba-2fa1-11d2-883f-0016d3cca427",
         },
         TableName: process.env.E_COMMERCE_TABLE,
       });
@@ -63,8 +63,7 @@ describe("Dynamo utils", () => {
       assert.deepStrictEqual(actual, {
         Item: {
           PK: "USER#1b4e28ba-2fa1-11d2-883f-0016d3cca427",
-          SK: "PRODUCT#1b4e28ba-2fa1-11d2-883f-0016d3cca427",
-          GSI1PK: "CART#3dd210bf-59df-438f-b50c-2b1dcd08d8b5",
+          SK: "CART#ITEM#1b4e28ba-2fa1-11d2-883f-0016d3cca427",
           ...cartItemSample,
         },
         TableName: process.env.E_COMMERCE_TABLE,
