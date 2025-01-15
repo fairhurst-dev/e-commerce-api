@@ -10,7 +10,6 @@ import { path } from "ramda";
 
 export const handler = async (event) => {
   try {
-    console.log(event);
     const userUUID = getUserUUID(event);
 
     if (!userUUID) {
@@ -21,8 +20,6 @@ export const handler = async (event) => {
     }
 
     const cart = await getCart(userUUID);
-
-    console.log("fetched cart", cart);
 
     if (cart.length === 0) {
       return {

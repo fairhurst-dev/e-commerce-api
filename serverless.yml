@@ -184,7 +184,7 @@ functions:
     handler: src/routes/order/get_order.handler
     events:
       - httpApi:
-          path: /order/{orderUUID}
+          path: /order/{cartUUID}
           method: GET
           authorizer:
             name: jwtAuthorizer

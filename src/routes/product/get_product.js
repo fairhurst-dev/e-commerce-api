@@ -3,7 +3,6 @@ import { getProduct } from "#lib/services/dynamodb/index.js";
 import { path } from "ramda";
 
 const getProductHandler = async (event) => {
-  console.log("my  event is ", event);
   const productId = path(["pathParameters", "id"], event);
   try {
     const product = await getProduct(productId);

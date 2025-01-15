@@ -1,23 +1,20 @@
-import { andThen, tap, pipe, update } from "ramda";
+import { andThen, tap, pipe, update, path } from "ramda";
 import { stripe } from "./client.js";
 import {
   makePaymentIntentFromCart,
   updatePaymentIntentFromCart,
 } from "./utils.js";
 
-const sendCreatePIparams = (params) => {
-  console.log("my params", params);
-  return stripe.paymentIntents.create(params);
-};
-const sendUpdatePIparams = (pi, params) => {
-  console.log("my params", params);
-  return stripe.paymentIntents.update(pi, params);
-};
+const sendCreatePIparams = (params) => stripe.paymentIntents.create(params);
+
+const sendUpdatePIparams = (pi, params) =>
+  stripe.paymentIntents.update(pi, params);
+
+const sendRemovePIparams = (pi) => stripe.paymentIntents.cancel(pi);
 
 export const createPaymentIntent = pipe(
   makePaymentIntentFromCart,
-  sendCreatePIparams,
-  andThen(tap(console.log))
+  sendCreatePIparams
 );
 
 export const updatePaymentIntent = async (cart, order) => {
@@ -25,3 +22,8 @@ export const updatePaymentIntent = async (cart, order) => {
   const pi = order.paymentIntent.id;
   return sendUpdatePIparams(pi, params);
 };
+
+export const removePaymentIntent = pipe(
+  path(["paymentIntent", "id"]),
+  sendRemovePIparams
+);

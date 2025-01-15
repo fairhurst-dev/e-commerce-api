@@ -3,7 +3,6 @@ import { getCart } from "#lib/services/dynamodb/index.js";
 import { getUserUUID } from "#lib/authorizer.js";
 
 export const handler = async (event) => {
-  console.log("my event is ", event);
   try {
     const uuid = getUserUUID(event);
 

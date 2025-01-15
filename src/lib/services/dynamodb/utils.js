@@ -46,9 +46,9 @@ const formatCartKey = applySpec({
   SK: pipe(prop("cartUUID"), addCartPrefix),
 });
 
-const formatGerOrderKey = applySpec({
+const formatOrderKey = applySpec({
   PK: pipe(prop("userUUID"), addUserPrefix),
-  SK: pipe(prop("orderUUID"), addOrderPrefix),
+  SK: pipe(prop("cartUUID"), addOrderPrefix),
 });
 
 const formatFullOrderKey = applySpec({
@@ -96,6 +96,10 @@ const baseGetRecordInput = pipe(
   addTableName
 );
 
+const decorateMustExist = assoc("ConditionExpression", "attribute_exists(PK)");
+
+const baseDeleteRecordInput = pipe(baseGetRecordInput, decorateMustExist);
+
 //queries
 const formatCartQuery = applySpec({
   KeyConditionExpression: always("PK = :pk and begins_with(SK, :sk)"),
@@ -126,9 +130,18 @@ export const makeUpsertCartItemInput = pipe(
 
 export const makeGetProductInput = pipe(formatProductKey, baseGetRecordInput);
 
-export const makeGetOrderInput = pipe(formatGerOrderKey, baseGetRecordInput);
+export const makeGetOrderInput = pipe(formatOrderKey, baseGetRecordInput);
 
 export const makeGetOrdersInput = pipe(formatOrdersQuery, addTableName);
+
+export const makeDeleteOrderInput = pipe(formatOrderKey, baseDeleteRecordInput);
+
+export const makeDeleteCartItemInput = pipe(
+  formatCartItemKey,
+  baseDeleteRecordInput
+);
+
+export const makeDeleteCartInput = pipe(formatCartKey, baseDeleteRecordInput);
 
 export const makeUpsertProductInput = pipe(
   formatProductRecord,

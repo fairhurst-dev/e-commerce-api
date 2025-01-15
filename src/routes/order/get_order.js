@@ -7,7 +7,7 @@ import { path } from "ramda";
 export const handler = async (event) => {
   try {
     const userUUID = getUserUUID(event);
-    const orderUUID = path(["pathParameters", "orderUUID"], event);
+    const cartUUID = path(["pathParameters", "cartUUID"], event);
 
     if (!userUUID) {
       return {
@@ -18,7 +18,7 @@ export const handler = async (event) => {
 
     const order = await getOrder({
       userUUID,
-      orderUUID,
+      cartUUID,
     });
 
     if (!order) {

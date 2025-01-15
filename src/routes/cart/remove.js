@@ -4,7 +4,7 @@ import { getUserUUID } from "#lib/authorizer.js";
 import { path } from "ramda";
 import { getCartItem, deleteCartItem } from "#lib/services/dynamodb/index.js";
 
-const removeCartItemHandler = async (event) => {
+export const handler = async (event) => {
   try {
     const userUUID = getUserUUID(event);
     const productId = path(["pathParameters", "productId"], event);
@@ -22,8 +22,6 @@ const removeCartItemHandler = async (event) => {
     };
 
     const cartItem = await getCartItem(payload);
-
-    console.log("my cart item", cartItem);
 
     if (!cartItem) {
       return {
@@ -47,4 +45,4 @@ const removeCartItemHandler = async (event) => {
   }
 };
 
-export const handler = middyfy(removeCartItemHandler);
+//export const handler = middyfy(removeCartItemHandler);

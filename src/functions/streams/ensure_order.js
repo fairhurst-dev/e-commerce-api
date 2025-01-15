@@ -10,10 +10,8 @@ const unmarshallProduct = ifElse(
 
 export const handler = async (event) => {
   for (const record of event.Records) {
-    console.log("Record:", record);
     try {
       const unmarshalled = unmarshallProduct(record);
-      console.log("Unmarshalled:", unmarshalled);
       if (unmarshalled.SK.includes("CART#ITEM")) {
         await ensureOrder(unmarshalled);
       } else {

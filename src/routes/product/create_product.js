@@ -8,7 +8,6 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 export const handler = async (event) => {
   const body = prop("body", event);
   try {
-    console.log("event", event);
     const isAdmin = getIsAdmin(event);
 
     if (!isAdmin) {

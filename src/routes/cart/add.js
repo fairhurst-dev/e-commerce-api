@@ -22,8 +22,6 @@ export const handler = async (event) => {
 
     const product = await getProduct(productId);
 
-    console.log("fetched product", product);
-
     if (!product) {
       return {
         statusCode: 404,
