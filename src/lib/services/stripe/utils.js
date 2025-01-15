@@ -1,4 +1,4 @@
-import { applySpec, prop, always, path } from "ramda";
+import { applySpec, prop, always, path, identity } from "ramda";
 
 export const makePaymentIntentFromCart = applySpec({
   amount: prop("total"),
@@ -11,4 +11,8 @@ export const makePaymentIntentFromCart = applySpec({
 
 export const updatePaymentIntentFromCart = applySpec({
   amount: prop("total"),
+});
+
+export const confirmPaymentIntentParams = applySpec({
+  payment_method: identity,
 });

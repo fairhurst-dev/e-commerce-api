@@ -21,6 +21,7 @@ import {
   createPaymentIntent,
   updatePaymentIntent,
   removePaymentIntent,
+  confirmPaymentIntent,
 } from "#lib/services/stripe/index.js";
 
 const client = new DynamoDB({});
@@ -61,10 +62,6 @@ export const getOrders = pipe(
   andThen(pipe(pipe(prop("Items"), map(scrubKeys))))
 );
 
-export const checkout = {
-  /*delete cart*/
-};
-
 export const upsertProduct = pipe(
   makeUpsertProductInput,
   put,
@@ -78,10 +75,25 @@ const itemIsInCart = (cart, newCartItem) =>
 
 const removeCart = pipe(makeDeleteCartInput, remove);
 
+const removeCartAndItems = async (order) => {
+  const allCartItems = await pipe(
+    makeGetCartInput,
+    query,
+    prop("Items")
+  )(order);
+
+  for (const item of allCartItems) {
+    if (item.SK.includes("CART#ITEM#")) {
+      const input = makeDeleteCartItemInput(item);
+      await remove(input);
+    }
+    const input = makeDeleteCartInput(item);
+    await remove(input);
+  }
+};
+
 export const upsertCartItem = async (input) => {
   const cart = await getCart(input.userUUID);
-
-  console.log("cart", cart);
 
   if (itemIsInCart(cart, input)) {
     throw new Error("Item is already in cart");
@@ -125,9 +137,14 @@ export const ensureOrder = async (cartItem) => {
     cartUUID: cart.cartUUID,
     userUUID: cart.userUUID,
   });
-  console.log("my order", order);
   if (!order) {
     return createOrder(cart);
   }
   return updateOrder(cart, order);
+};
+
+export const checkout = async (input) => {
+  const order = await getOrder(input);
+  await confirmPaymentIntent(input.paymentMethodId, order);
+  await removeCartAndItems(order);
 };

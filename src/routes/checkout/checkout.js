@@ -1,16 +1,13 @@
 import { middyfy } from "#lib/middleware.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { getUserUUID } from "#lib/authorizer.js";
-import {
-  getCart,
-  checkout,
-  createOrder,
-} from "#lib/services/dynamodb/index.js";
+import { getCart, checkout } from "#lib/services/dynamodb/index.js";
 import { path } from "ramda";
 
 export const handler = async (event) => {
   try {
     const userUUID = getUserUUID(event);
+    const paymentMethodId = event.body.paymentMethodId;
 
     if (!userUUID) {
       return {
@@ -21,16 +18,14 @@ export const handler = async (event) => {
 
     const cart = await getCart(userUUID);
 
-    if (cart.length === 0) {
+    if (cart.items.length === 0) {
       return {
         statusCode: 422,
         body: JSON.stringify({ message: "No items to checkout" }),
       };
     }
 
-    await checkout(cart);
-
-    const order = await createOrder(cart, userUUID);
+    const order = await checkout({ ...cart, paymentMethodId });
 
     return {
       statusCode: 200,
