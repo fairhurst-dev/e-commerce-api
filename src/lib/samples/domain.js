@@ -46,7 +46,7 @@ export const orderSample = {
       status: null,
     },
     billing_address_collection: null,
-    cancel_url: "https://google.com?canceled=true",
+    cancel_url: "localhost:3000/cancel",
     client_reference_id: null,
     client_secret: null,
     consent: null,
@@ -129,7 +129,7 @@ export const orderSample = {
     status: "complete",
     submit_type: null,
     subscription: null,
-    success_url: "https://google.com/?success=true",
+    success_url: "localhost:3000/success",
     total_details: {
       amount_discount: 0,
       amount_shipping: 0,

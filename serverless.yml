@@ -31,6 +31,7 @@ provider:
         - DomainEndpoint
     STRIPE_WEBHOOK_SECRET: ${env:STRIPE_WEBHOOK_SECRET}
     STRIPE_SK: ${env:STRIPE_SK}
+    DOMAIN: ${env:DOMAIN}
   logRetentionInDays: 30
   httpApi:
     metrics: true
