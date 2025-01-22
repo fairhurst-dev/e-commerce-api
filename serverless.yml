@@ -31,6 +31,7 @@ provider:
         - DomainEndpoint
     STRIPE_WEBHOOK_SECRET: ${env:STRIPE_WEBHOOK_SECRET}
     STRIPE_SK: ${env:STRIPE_SK}
+    DOMAIN: ${env:DOMAIN}
   logRetentionInDays: 30
   httpApi:
     metrics: true
@@ -131,10 +132,6 @@ functions:
           arn:
             Fn::GetAtt: [eCommerceTable, StreamArn]
 
-  #internal test query
-  testQuery:
-    handler: src/functions/opensearch/test_query.handler
-
   #cart
   getCart:
     handler: src/routes/cart/get_cart.handler
@@ -150,7 +147,7 @@ functions:
     events:
       - httpApi:
           method: POST
-          path: /cart/{productId}
+          path: /cart/{id}
           authorizer:
             name: jwtAuthorizer
 
@@ -159,7 +156,7 @@ functions:
     events:
       - httpApi:
           method: DELETE
-          path: /cart/{productId}
+          path: /cart/{id}
           authorizer:
             name: jwtAuthorizer
 

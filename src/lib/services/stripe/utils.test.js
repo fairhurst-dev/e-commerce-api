@@ -24,9 +24,8 @@ describe("stripe utils", () => {
         },
       ],
       mode: "payment",
-      //TODO: replace with actual FE urls
-      success_url: `https://google.com/?success=true`,
-      cancel_url: `https://google.com?canceled=true`,
+      success_url: `${process.env.DOMAIN}/success`,
+      cancel_url: `${process.env.DOMAIN}/cancel`,
       metadata: {
         userUUID: "1b4e28ba-2fa1-11d2-883f-0016d3cca427",
         cartUUID: "3dd210bf-59df-438f-b50c-2b1dcd08d8b5",

@@ -1,36 +1,18 @@
 import { middyfy } from "#lib/middleware.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
-import { prop } from "ramda";
-import { getIsAdmin } from "#lib/authorizer.js";
+import { pipe, tryCatch, prop, tap, ifElse } from "ramda";
 import { upsertProduct } from "#lib/services/dynamodb/index.js";
 import { newProductValidator } from "#lib/validators.js";
+import { respFormatter, catcher, unauthorized } from "#routes/utils.js";
+import { getIsAdmin } from "#lib/authorizer.js";
 
-export const createProductHandler = async (event) => {
-  const body = prop("body", event);
-  try {
-    const isAdmin = getIsAdmin(event);
-
-    if (!isAdmin) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ message: "Unauthorized" }),
-      };
-    }
-
-    const payload = newProductValidator(JSON.parse(body));
-
-    const product = await upsertProduct(payload);
-    return {
-      statusCode: 200,
-      body: JSON.stringify(product),
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: error.message }),
-    };
-  }
-};
+export const createProductHandler = tryCatch(
+  ifElse(
+    getIsAdmin,
+    pipe(prop("body"), newProductValidator, tap(upsertProduct), respFormatter),
+    unauthorized
+  ),
+  catcher
+);
 
 export const handler = middyfy(createProductHandler).use(httpJsonBodyParser());

@@ -80,7 +80,6 @@ describe("Dynamo utils", () => {
   describe("deletes", () => {
     it("should create delete cart item input", () => {
       const actual = makeDeleteCartItemInput(cartItemSample);
-      console.log(actual);
       assert.deepStrictEqual(actual, {
         Key: {
           PK: "USER#1b4e28ba-2fa1-11d2-883f-0016d3cca427",

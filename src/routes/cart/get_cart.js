@@ -1,31 +1,12 @@
 import { middyfy } from "#lib/middleware.js";
 import { getCart } from "#lib/services/dynamodb/index.js";
 import { getUserUUID } from "#lib/authorizer.js";
+import { tryCatch, pipe, andThen } from "ramda";
+import { respFormatter, catcher } from "#routes/utils.js";
 
-export const getCartHandler = async (event) => {
-  try {
-    const uuid = getUserUUID(event);
+export const handler = tryCatch(
+  pipe(getUserUUID, getCart, andThen(respFormatter)),
+  catcher
+);
 
-    if (!uuid) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ message: "Unauthorized" }),
-      };
-    }
-
-    const cart = await getCart(uuid);
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(cart),
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: error.message }),
-    };
-  }
-};
-
-export const handler = middyfy(getCartHandler);
+//export const handler = middyfy(getCartHandler);
