@@ -1,30 +1,18 @@
 import { middyfy } from "#lib/middleware.js";
-import { path } from "ramda";
+import { pipe, tryCatch, andThen, ifElse, path, isNotNil } from "ramda";
 import { getProductsByCategories } from "#lib/services/opensearch/index.js";
+import { respFormatter, catcher, badRequest } from "#routes/utils.js";
 
-const searchProductsHandler = async (event) => {
-  const qsp = path(["queryStringParameters", "categories"], event);
-  if (!qsp) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: "Query String Parameters not provided" }),
-    };
-  }
-
-  try {
-    const products = await getProductsByCategories(qsp);
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(products),
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: error.message }),
-    };
-  }
-};
+const searchProductsHandler = tryCatch(
+  pipe(
+    path(["queryStringParameters", "categories"]),
+    ifElse(
+      isNotNil,
+      pipe(getProductsByCategories, andThen(respFormatter)),
+      badRequest
+    )
+  ),
+  catcher
+);
 
 export const handler = middyfy(searchProductsHandler);

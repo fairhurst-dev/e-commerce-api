@@ -2,7 +2,12 @@ import Joi from "joi";
 import { randomUUID } from "crypto";
 export const userSchema = Joi.object({
   email: Joi.string().email().required(),
-  password: Joi.string().min(8).required(), //TODO: enforce password complexity
+  password: Joi.string()
+    .min(8)
+    .max(16)
+    .required()
+    .pattern(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>?`~]/)
+    .message('"password" must contain at least one special character'),
 });
 
 export const confirmOTPSchema = Joi.object({
