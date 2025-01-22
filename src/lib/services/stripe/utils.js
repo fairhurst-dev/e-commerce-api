@@ -15,8 +15,8 @@ const makeStripeLineItem = applySpec({
 export const makeSessionParams = applySpec({
   line_items: pipe(prop("items"), map(makeStripeLineItem)),
   mode: always("payment"),
-  success_url: always(`https://google.com/?success=true`),
-  cancel_url: always(`https://google.com?canceled=true`),
+  success_url: always(`${process.env.DOMAIN}/success`),
+  cancel_url: always(`${process.env.DOMAIN}/cancel`),
   metadata: {
     userUUID: prop("userUUID"),
     cartUUID: prop("cartUUID"),
