@@ -1,14 +1,15 @@
-import { path, pipe, includes } from "ramda";
+import { path, pipe, includes, pathOr, tap } from "ramda";
 
-const getCognitoGroups = path([
-  "requestContext",
-  "authorizer",
-  "jwt",
-  "claims",
-  "cognito:groups",
-]);
+const getCognitoGroups = pathOr(
+  [],
+  ["requestContext", "authorizer", "jwt", "claims", "cognito:groups"]
+);
 
-export const getIsAdmin = pipe(getCognitoGroups, includes("Admin"));
+export const getIsAdmin = pipe(
+  getCognitoGroups,
+  tap(console.log),
+  includes("Admin")
+);
 
 export const getUserUUID = path([
   "requestContext",

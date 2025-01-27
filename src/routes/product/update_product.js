@@ -1,46 +1,36 @@
 import { middyfy } from "#lib/middleware.js";
-import { prop, path } from "ramda";
-import { getIsAdmin } from "#lib/authorizer.js";
-import { upsertProduct, getProduct } from "#lib/services/dynamodb/index.js";
+import { prop, tryCatch, pipe, ifElse, tap, andThen } from "ramda";
+import { upsertProduct } from "#lib/services/dynamodb/index.js";
 import { updateProductValidator } from "#lib/validators.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
+import {
+  respFormatter,
+  catcher,
+  checkIfProductExists,
+  badRequest,
+  unauthorized,
+} from "#routes/utils.js";
+import { getIsAdmin } from "#lib/authorizer.js";
 
-const updateProductsHandler = async (event) => {
-  const eventBody = prop("body", event);
-  const productId = path(["pathParameters", "id"], event);
-  try {
-    const isAdmin = getIsAdmin(event);
+export const updateProductsHandler = async (event) => {
+  const productExists = await checkIfProductExists(event);
 
-    if (!isAdmin) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ message: "Unauthorized" }),
-      };
-    }
-
-    const existingProduct = await getProduct(productId);
-
-    if (!existingProduct) {
-      return {
-        statusCode: 404,
-        body: JSON.stringify({ message: "Product not found" }),
-      };
-    }
-
-    const payload = updateProductValidator(eventBody);
-
-    const product = await upsertProduct(payload);
-    return {
-      statusCode: 200,
-      body: JSON.stringify(product),
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: error.message }),
-    };
+  if (!productExists) {
+    return badRequest();
   }
+  return tryCatch(
+    ifElse(
+      getIsAdmin,
+      pipe(
+        prop("body"),
+        updateProductValidator,
+        tap(upsertProduct),
+        respFormatter
+      ),
+      unauthorized
+    ),
+    catcher
+  )(event);
 };
 
 export const handler = middyfy(updateProductsHandler).use(httpJsonBodyParser());
