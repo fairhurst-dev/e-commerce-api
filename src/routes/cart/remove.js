@@ -1,6 +1,6 @@
 import { middyfy } from "#lib/middleware.js";
 import { getUserUUID } from "#lib/authorizer.js";
-import { path, pipe, applySpec, andThen, tryCatch, tap } from "ramda";
+import { path, pipe, applySpec, andThen, tryCatch } from "ramda";
 import { deleteCartItem } from "#lib/services/dynamodb/index.js";
 import { catcher, noContent } from "#routes/utils.js";
 

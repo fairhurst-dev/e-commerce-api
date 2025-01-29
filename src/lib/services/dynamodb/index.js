@@ -3,6 +3,7 @@ import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
 import {
   makeUpsertProductInput,
   makeGetProductInput,
+  makeGetAllProductsInput,
   makeGetCartInput,
   makeUpsertCartItemInput,
   makeGetCartItemInput,
@@ -33,6 +34,12 @@ export const getProduct = pipe(
   andThen(pipe(prop("Item"), scrubKeys))
 );
 
+export const getProducts = pipe(
+  makeGetAllProductsInput,
+  query,
+  andThen(pipe(prop("Items"), map(scrubKeys)))
+);
+
 export const getCartItem = pipe(
   makeGetCartItemInput,
   get,
@@ -57,11 +64,7 @@ export const getOrders = pipe(
   andThen(pipe(pipe(prop("Items"), map(scrubKeys))))
 );
 
-export const upsertProduct = pipe(
-  makeUpsertProductInput,
-  put,
-  andThen(prop("Attributes"))
-);
+export const upsertProduct = pipe(makeUpsertProductInput, put);
 
 const upsertCart = pipe(makeUpsertCartInput, put);
 
