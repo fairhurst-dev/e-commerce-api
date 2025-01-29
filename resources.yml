@@ -78,26 +78,26 @@ Resources:
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
 
-  productsSearchDomain:
-    Type: AWS::OpenSearchService::Domain
-    Properties:
-      DomainName: ${self:service}-${sls:stage}
-      EngineVersion: "OpenSearch_2.11"
-      ClusterConfig:
-        DedicatedMasterEnabled: false
-        InstanceType: t3.small.search
-        InstanceCount: 1
-      EBSOptions:
-        EBSEnabled: true
-        VolumeSize: "10"
-        VolumeType: "gp3"
-        Iops: 3000
-        Throughput: 125
-      AccessPolicies:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Principal:
-              AWS: !Sub "arn:aws:iam::${aws:accountId}:role/${self:service}-${sls:stage}-${aws:region}-lambdaRole"
-            Action: "es:*"
-            Resource: !Sub "arn:aws:es:${aws:region}:${aws:accountId}:domain/${self:service}-${sls:stage}/*"
+  # productsSearchDomain:
+  #   Type: AWS::OpenSearchService::Domain
+  #   Properties:
+  #     DomainName: ${self:service}-${sls:stage}
+  #     EngineVersion: "OpenSearch_2.11"
+  #     ClusterConfig:
+  #       DedicatedMasterEnabled: false
+  #       InstanceType: t3.small.search
+  #       InstanceCount: 1
+  #     EBSOptions:
+  #       EBSEnabled: true
+  #       VolumeSize: "10"
+  #       VolumeType: "gp3"
+  #       Iops: 3000
+  #       Throughput: 125
+  #     AccessPolicies:
+  #       Version: "2012-10-17"
+  #       Statement:
+  #         - Effect: "Allow"
+  #           Principal:
+  #             AWS: !Sub "arn:aws:iam::${aws:accountId}:role/${self:service}-${sls:stage}-${aws:region}-lambdaRole"
+  #           Action: "es:*"
+  #           Resource: !Sub "arn:aws:es:${aws:region}:${aws:accountId}:domain/${self:service}-${sls:stage}/*"
