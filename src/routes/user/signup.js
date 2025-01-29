@@ -1,4 +1,4 @@
-import { prop, pick, pipe, tryCatch, andThen } from "ramda";
+import { prop, pick, pipe, tryCatch, andThen, always } from "ramda";
 import { signup } from "#lib/services/cognito/index.js";
 import { userValidator } from "#lib/validators.js";
 import { middyfy } from "#lib/middleware.js";
@@ -11,7 +11,7 @@ const signupHandler = tryCatch(
     pick(["email", "password"]),
     userValidator,
     signup,
-    andThen(respFormatter)
+    andThen(pipe(always("User Signed Up"), respFormatter))
   ),
   catcher
 );

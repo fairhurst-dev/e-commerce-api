@@ -101,6 +101,13 @@ functions:
           method: GET
           path: /product/{id}
 
+  getProducts:
+    handler: src/routes/product/get_products.handler
+    events:
+      - httpApi:
+          method: GET
+          path: /products
+
   updateProduct:
     handler: src/routes/product/update_product.handler
     events:
