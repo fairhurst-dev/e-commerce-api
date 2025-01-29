@@ -38,9 +38,17 @@ To checkout:
 
 `npm install`
 
+## lint 👚
+
+`npm run lint`
+
 ## test 🧑‍🔬
 
 `npm run test`
+
+## build 🏗️
+
+`npm run build`
 
 ## deploy 🚀
 
