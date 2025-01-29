@@ -11,16 +11,15 @@
   "type": "module",
   "scripts": {
     "test": "node --env-file=.env.test --test --test-reporter spec",
-    "dev": "node --test --watch",
-    "build": "npx sls package",
-    "lint": "npx eslint"
+    "watch": "node --test --watch",
+    "lint": "eslint"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fairhurst-dev/e-commerce-api.git"
   },
   "author": "fairhurst.dev",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/fairhurst-dev/e-commerce-api/issues"
   },

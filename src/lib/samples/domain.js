@@ -4,7 +4,7 @@ export const newProductSample = {
   price: 1000,
   msrp: 2000,
   stock: 3,
-  categories: ["category"],
+  categories: ["sports"],
   sku: "test-sku",
 };
 

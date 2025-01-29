@@ -1,4 +1,4 @@
-import { andThen, pick, pipe, prop, tryCatch } from "ramda";
+import { andThen, path, pipe, tryCatch, pick } from "ramda";
 import { refresh } from "#lib/services/cognito/index.js";
 import { refreshValidator } from "#lib/validators.js";
 import { middyfy } from "#lib/middleware.js";
@@ -7,7 +7,7 @@ import { catcher, respFormatter } from "#routes/utils.js";
 
 const refreshHandler = tryCatch(
   pipe(
-    prop("body"),
+    path(["body"]),
     pick(["refreshToken", "deviceKey"]),
     refreshValidator,
     refresh,

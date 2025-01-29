@@ -29,8 +29,13 @@ describe("open search utils", () => {
     });
   });
   describe("records", () => {
-    it("should format index a record", () => {
-      const payload = formatIndexRecordPayload({ id: "1", name: "product" });
+    it("should format index record payload", () => {
+      const payload = formatIndexRecordPayload({
+        PK: "product#1",
+        SK: "#",
+        id: "1",
+        name: "product",
+      });
       assert.deepStrictEqual(payload, {
         index: "products",
         id: "1",

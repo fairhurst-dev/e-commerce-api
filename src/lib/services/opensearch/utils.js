@@ -11,6 +11,7 @@ import {
   prop,
   map,
   split,
+  omit,
 } from "ramda";
 import { INDEX_NAME, PRODUCTS_MAPPINGS } from "./config.js";
 
@@ -18,13 +19,13 @@ export const makeClient = () =>
   new Client({
     ...AwsSigv4Signer({
       region: "us-east-1",
-      service: "es",
+      service: "aoss",
       getCredentials: () => {
         const credentialsProvider = defaultProvider();
         return credentialsProvider();
       },
     }),
-    node: `https://${process.env.PRODUCTS_DOMAIN_ENDPOINT}`, // OpenSearch domain URL
+    node: `${process.env.PRODUCTS_COLLECTION_ENDPOINT}`, // OpenSearch domain URL
   });
 
 const addIndexName = assoc("index", INDEX_NAME);
@@ -83,7 +84,7 @@ export const formatCategoryQuery = pipe(
 export const formatIndexRecordPayload = pipe(
   applySpec({
     id: prop("id"),
-    body: identity,
+    body: omit(["PK", "SK"]),
   }),
   addIndexName
 );
