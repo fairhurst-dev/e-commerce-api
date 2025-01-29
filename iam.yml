@@ -6,7 +6,7 @@ role:
       Resource: "*"
     - Effect: "Allow"
       Action:
-        - "es:*"
+        - "aoss:*"
         - "iam:ListUsers"
         - "iam:ListRoles"
       Resource: "*"

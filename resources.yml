@@ -78,26 +78,31 @@ Resources:
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
 
-  productsSearchDomain:
-    Type: AWS::OpenSearchService::Domain
+  productsSearchCollection:
+    Type: AWS::OpenSearchServerless::Collection
     Properties:
-      DomainName: ${self:service}-${sls:stage}
-      EngineVersion: "OpenSearch_2.11"
-      ClusterConfig:
-        DedicatedMasterEnabled: false
-        InstanceType: t3.small.search
-        InstanceCount: 1
-      EBSOptions:
-        EBSEnabled: true
-        VolumeSize: "10"
-        VolumeType: "gp3"
-        Iops: 3000
-        Throughput: 125
-      AccessPolicies:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Principal:
-              AWS: !Sub "arn:aws:iam::${aws:accountId}:role/${self:service}-${sls:stage}-${aws:region}-lambdaRole"
-            Action: "es:*"
-            Resource: !Sub "arn:aws:es:${aws:region}:${aws:accountId}:domain/${self:service}-${sls:stage}/*"
+      Name: ${self:service}-${sls:stage}
+      StandbyReplicas: DISABLED
+      Type: SEARCH
+    DependsOn: productsSearchSecurityPolicy
+  productsSearchSecurityPolicy:
+    Type: "AWS::OpenSearchServerless::SecurityPolicy"
+    Properties:
+      Name: ${self:service}-${sls:stage}-sec
+      Type: encryption
+      Policy: !Sub >-
+        {"Rules":[{"ResourceType":"collection","Resource":["collection/${self:service}-${sls:stage}"]}],"AWSOwnedKey":true}
+  productsSearchNetworkPolicy:
+    Type: "AWS::OpenSearchServerless::SecurityPolicy"
+    Properties:
+      Name: ${self:service}-${sls:stage}-net
+      Type: network
+      Policy: !Sub >-
+        [{"Rules":[{"ResourceType":"collection","Resource":["collection/${self:service}-${sls:stage}"]}, {"ResourceType":"dashboard","Resource":["collection/${self:service}-${sls:stage}*"]}],"AllowFromPublic":true}]
+  productsSearchAccessPolicy:
+    Type: "AWS::OpenSearchServerless::AccessPolicy"
+    Properties:
+      Name: ${self:service}-${sls:stage}-acc
+      Type: data
+      Policy: !Sub >-
+        [{"Rules":[{"ResourceType":"index","Resource":["index/${self:service}-${sls:stage}/*"],"Permission":["aoss:*"]},{"ResourceType":"collection","Resource":["collection/${self:service}-${sls:stage}"],"Permission":["aoss:*"]}],"Principal":["arn:aws:iam::${aws:accountId}:role/${self:service}-${sls:stage}-${aws:region}-lambdaRole", "arn:aws:iam::${aws:accountId}:user/cfairhurst99"]}]

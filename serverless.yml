@@ -4,14 +4,6 @@ frameworkVersion: "4"
 package:
   individually: true
 
-stages:
-  prod:
-    params:
-      replicas_enabled: ENABLED
-  default:
-    params:
-      replicas_enabled: DISABLED
-
 provider:
   name: aws
   runtime: nodejs20.x
@@ -25,10 +17,10 @@ provider:
       Ref: userPool
     E_COMMERCE_TABLE:
       Ref: eCommerceTable
-    PRODUCTS_DOMAIN_ENDPOINT:
+    PRODUCTS_COLLECTION_ENDPOINT:
       Fn::GetAtt:
-        - productsSearchDomain
-        - DomainEndpoint
+        - productsSearchCollection
+        - CollectionEndpoint
     STRIPE_WEBHOOK_SECRET: ${env:STRIPE_WEBHOOK_SECRET}
     STRIPE_SK: ${env:STRIPE_SK}
     DOMAIN: ${env:DOMAIN}
@@ -100,6 +92,13 @@ functions:
       - httpApi:
           method: GET
           path: /product/{id}
+
+  getProducts:
+    handler: src/routes/product/get_products.handler
+    events:
+      - httpApi:
+          method: GET
+          path: /products
 
   updateProduct:
     handler: src/routes/product/update_product.handler

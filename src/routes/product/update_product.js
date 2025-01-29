@@ -1,5 +1,5 @@
 import { middyfy } from "#lib/middleware.js";
-import { prop, tryCatch, pipe, ifElse, tap, andThen } from "ramda";
+import { prop, tryCatch, pipe, ifElse, andThen } from "ramda";
 import { upsertProduct } from "#lib/services/dynamodb/index.js";
 import { updateProductValidator } from "#lib/validators.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
@@ -9,6 +9,7 @@ import {
   checkIfProductExists,
   badRequest,
   unauthorized,
+  asyncTap,
 } from "#routes/utils.js";
 import { getIsAdmin } from "#lib/authorizer.js";
 
@@ -24,8 +25,8 @@ export const updateProductsHandler = async (event) => {
       pipe(
         prop("body"),
         updateProductValidator,
-        tap(upsertProduct),
-        respFormatter
+        asyncTap(upsertProduct),
+        andThen(respFormatter)
       ),
       unauthorized
     ),

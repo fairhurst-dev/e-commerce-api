@@ -1,3 +1,5 @@
+import { ELECTRONICS, CLOTHING, HOME, BOOKS, SPORTS } from "./constants.js";
+
 import Joi from "joi";
 import { randomUUID } from "crypto";
 export const userSchema = Joi.object({
@@ -6,7 +8,7 @@ export const userSchema = Joi.object({
     .min(8)
     .max(16)
     .required()
-    .pattern(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>?`~]/)
+    .pattern(/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>?`~]/)
     .message('"password" must contain at least one special character'),
 });
 
@@ -26,7 +28,9 @@ const baseProductSchema = Joi.object({
   price: Joi.number().min(0).required(),
   msrp: Joi.number().min(0).required(),
   stock: Joi.number().integer().min(0).required().default(0),
-  categories: Joi.array().items(Joi.string()).default([]),
+  categories: Joi.array()
+    .items(Joi.string().valid(ELECTRONICS, CLOTHING, BOOKS, HOME, SPORTS))
+    .default([]),
   sku: Joi.string().required(),
 });
 

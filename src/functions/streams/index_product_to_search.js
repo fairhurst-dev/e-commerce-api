@@ -24,7 +24,6 @@ export const handler = async (event) => {
   for (const record of event.Records) {
     try {
       const unmarshalled = unmarshallNewImage(record);
-      console.log("unmarshalled", unmarshalled);
       if (imageExists(unmarshalled)) {
         await indexProduct(unmarshalled);
       }

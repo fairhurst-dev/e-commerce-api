@@ -18,6 +18,7 @@ import {
   checkIfProductExists,
   respFormatter,
   badRequest,
+  asyncTap,
 } from "#routes/utils.js";
 
 export const addCartItemHandler = async (event) => {
@@ -38,7 +39,7 @@ export const addCartItemHandler = async (event) => {
           converge(assoc("quantity"), [always(quantity), identity]),
           converge(assoc("userUUID"), [() => getUserUUID(event), identity]),
           cartItemValidator,
-          upsertCartItem,
+          asyncTap(upsertCartItem),
           andThen(respFormatter)
         )
       )

@@ -94,6 +94,21 @@ describe("validators", () => {
       const product = updateProductValidator(completeProductSample);
       assert.deepStrictEqual(product.categories, []);
     });
+    it("must be a valid category", () => {
+      assert.throws(
+        () => {
+          updateProductValidator({
+            ...completeProductSample,
+            categories: ["invalid-category"],
+          });
+        },
+        {
+          name: "Error",
+          message:
+            '"categories[0]" must be one of [electronics, clothing, books, home, sports]',
+        }
+      );
+    });
     it("must have a name", () => {
       assert.throws(
         () =>

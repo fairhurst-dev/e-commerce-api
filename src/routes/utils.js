@@ -61,3 +61,8 @@ export const checkIfCartItemExists = pipe(
   getCartItem,
   andThen(when(isNil, notFound))
 );
+
+export const asyncTap = (asyncFn) => async (input) => {
+  await asyncFn(input);
+  return Promise.resolve(input);
+};
