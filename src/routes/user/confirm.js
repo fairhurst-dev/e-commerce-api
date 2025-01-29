@@ -1,4 +1,4 @@
-import { prop, pick, pipe, tryCatch, andThen } from "ramda";
+import { prop, pick, pipe, tryCatch, andThen, always } from "ramda";
 import { confirmSignUp } from "#lib/services/cognito/index.js";
 import { confirmOTPValidator } from "#lib/validators.js";
 import { middyfy } from "#lib/middleware.js";
@@ -11,7 +11,7 @@ const confirmHandler = tryCatch(
     pick(["email", "otp"]),
     confirmOTPValidator,
     confirmSignUp,
-    andThen(respFormatter)
+    andThen(pipe(always("User Confirmed"), respFormatter))
   ),
   catcher
 );
