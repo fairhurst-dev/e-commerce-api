@@ -9,6 +9,7 @@ import {
 import {
   makeUpsertProductInput,
   makeGetProductInput,
+  makeGetAllProductsInput,
   makeGetCartInput,
   makeUpsertCartItemInput,
   makeGetCartItemInput,
@@ -54,6 +55,18 @@ describe("Dynamo utils", () => {
       const actual = makeGetProductInput(productId);
       assert.deepStrictEqual(actual, {
         Key: { PK: "PRODUCT#123", SK: "#" },
+        TableName: process.env.E_COMMERCE_TABLE,
+      });
+    });
+    it("should create get all products input", () => {
+      const actual = makeGetAllProductsInput();
+      assert.deepStrictEqual(actual, {
+        KeyConditionExpression: "SK = :sk and begins_with(PK, :pk)",
+        ExpressionAttributeValues: {
+          ":sk": "#",
+          ":pk": "PRODUCT#",
+        },
+        IndexName: "GSI1",
         TableName: process.env.E_COMMERCE_TABLE,
       });
     });

@@ -1,5 +1,5 @@
 import { middyfy } from "#lib/middleware.js";
-import { prop, tryCatch, pipe, ifElse, tap, andThen } from "ramda";
+import { prop, tryCatch, pipe, ifElse, tap } from "ramda";
 import { upsertProduct } from "#lib/services/dynamodb/index.js";
 import { updateProductValidator } from "#lib/validators.js";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
