@@ -12,6 +12,7 @@ import {
   map,
   split,
   omit,
+  assocPath,
 } from "ramda";
 import { INDEX_NAME, PRODUCTS_MAPPINGS } from "./config.js";
 
@@ -56,13 +57,22 @@ const baseQuery = applySpec({
   },
 });
 
+const assocSort = assocPath(
+  ["body", "sort"],
+  [{ _score: "desc" }, { price: "asc" }]
+);
+
 export const formatQuery = pipe(
   applySpec({
-    query_string: {
+    multi_match: {
       query: identity,
+      fields: always(["name^4", "description^2", "categories"]),
+      type: always("best_fields"),
+      fuzziness: always("AUTO"),
     },
   }),
   baseQuery,
+  assocSort,
   addIndexName
 );
 

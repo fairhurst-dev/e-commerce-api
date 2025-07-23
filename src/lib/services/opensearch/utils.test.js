@@ -50,10 +50,14 @@ describe("open search utils", () => {
         index: "products",
         body: {
           query: {
-            query_string: {
+            multi_match: {
               query: "headphones",
+              fields: ["name^4", "description^2", "categories"],
+              type: "best_fields",
+              fuzziness: "AUTO",
             },
           },
+          sort: [{ _score: "desc" }, { price: "asc" }],
         },
       });
     });
