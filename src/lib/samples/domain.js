@@ -30,6 +30,11 @@ export const cartSample = {
   cartUUID: "3dd210bf-59df-438f-b50c-2b1dcd08d8b5",
 };
 
+export const fullCartSample = {
+  ...cartSample,
+  items: [cartItemSample],
+};
+
 export const orderSample = {
   cartUUID: "36669190-9a99-4092-a894-320839a56b0e",
   checkoutSession: {

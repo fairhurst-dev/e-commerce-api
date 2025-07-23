@@ -5,6 +5,7 @@ import {
   cartItemSample,
   cartSample,
   orderSample,
+  fullCartSample,
 } from "#lib/samples/domain.js";
 import {
   makeUpsertProductInput,
@@ -20,7 +21,9 @@ import {
   makeDeleteCartItemInput,
   makeGetOrderInput,
   makeGetOrdersInput,
+  makeDecrementStockInput,
 } from "./utils.js";
+import { map } from "ramda";
 
 describe("Dynamo utils", () => {
   describe("queries", () => {
@@ -158,6 +161,28 @@ describe("Dynamo utils", () => {
         },
         TableName: process.env.E_COMMERCE_TABLE,
       });
+    });
+  });
+  describe("updates", () => {
+    it("should create decrement stock input", () => {
+      const actual = map(makeDecrementStockInput)(fullCartSample.items);
+      assert.deepStrictEqual(actual, [
+        {
+          Key: {
+            PK: "PRODUCT#1b4e28ba-2fa1-11d2-883f-0016d3cca427",
+            SK: "#",
+          },
+          UpdateExpression: "SET #stock = #stock - :quantity",
+          ExpressionAttributeNames: {
+            "#stock": "stock",
+          },
+          ExpressionAttributeValues: {
+            ":quantity": 3,
+          },
+          ConditionExpression: "attribute_exists(PK)",
+          TableName: process.env.E_COMMERCE_TABLE,
+        },
+      ]);
     });
   });
   describe("helpers", () => {

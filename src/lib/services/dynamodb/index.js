@@ -14,9 +14,10 @@ import {
   makeDeleteCartItemInput,
   makeDeleteCartInput,
   itemIsInCart,
+  makeDecrementStockInput,
 } from "./utils.js";
 import { transformCartForClient, scrubKeys } from "#lib/transformers.js";
-import { andThen, prop, pipe, map } from "ramda";
+import { andThen, prop, pipe, map, curry } from "ramda";
 import { randomUUID } from "crypto";
 import { createCheckoutSession } from "#lib/services/stripe/index.js";
 
@@ -27,6 +28,15 @@ const get = (params) => docClient.get(params);
 const put = (params) => docClient.put(params);
 const remove = (params) => docClient.delete(params);
 const query = (params) => docClient.query(params);
+const update = (params) => docClient.update(params);
+
+const multiDBAction = curry(async (dbFn, inputs) => {
+  await Promise.all(
+    inputs.map(async (input) => {
+      return await dbFn(input);
+    })
+  );
+});
 
 export const getProduct = pipe(
   makeGetProductInput,
@@ -98,6 +108,16 @@ export const upsertCartItem = async (input) => {
 
 export const deleteCartItem = pipe(makeDeleteCartItemInput, remove);
 
+const decrementStock = pipe(
+  map(makeDecrementStockInput),
+  multiDBAction(update)
+);
+
+const postCheckoutCleanup = async (cart) => {
+  await removeCartAndItems(cart);
+  await decrementStock(cart.items);
+};
+
 export const createOrder = async (checkoutSession) => {
   const cart = await getCart(checkoutSession.metadata.userUUID);
   if (!cart.cartUUID) {
@@ -107,7 +127,7 @@ export const createOrder = async (checkoutSession) => {
 
   const orderInput = makeUpsertOrderInput({ ...cart, checkoutSession });
   await put(orderInput);
-  await removeCartAndItems(cart);
+  await postCheckoutCleanup(cart);
 };
 
 export const startCheckoutSession = pipe(

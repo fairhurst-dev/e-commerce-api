@@ -170,3 +170,23 @@ export const makeUpsertOrderInput = pipe(
   formatOrderRecord,
   baseUpsertRecordInput
 );
+
+//update
+
+export const makeDecrementStockInput = pipe(
+  applySpec({
+    Key: {
+      PK: pipe(prop("id"), addProductPrefix),
+      SK: always(BASE_PREFIX),
+    },
+    UpdateExpression: always("SET #stock = #stock - :quantity"),
+    ExpressionAttributeNames: {
+      "#stock": always("stock"),
+    },
+    ExpressionAttributeValues: {
+      ":quantity": prop("quantity"),
+    },
+    ConditionExpression: always("attribute_exists(PK)"),
+  }),
+  addTableName
+);

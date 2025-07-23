@@ -10,6 +10,7 @@ import {
   isNil,
   path,
   prop,
+  identity,
 } from "ramda";
 import { getProduct, getCartItem } from "#lib/services/dynamodb/index.js";
 
@@ -40,7 +41,7 @@ export const notFound = applySpec({
 
 export const badRequest = applySpec({
   statusCode: always(400),
-  body: always("Bad Request"),
+  body: ifElse(isNotNil, identity, always("Bad Request")),
 });
 
 export const noContent = applySpec({

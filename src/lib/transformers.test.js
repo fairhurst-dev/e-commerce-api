@@ -22,9 +22,9 @@ describe("Transformers", () => {
       cartUUID: "83d8fe05-b204-46ea-86bd-f0ef703809bb",
       userUUID: "123",
       items: [cartItemSample],
-      total: 1000,
-      quantity: 1,
-      formattedTotal: "$10.00",
+      total: 3000,
+      quantity: 3,
+      formattedTotal: "$30.00",
     });
   });
 });
