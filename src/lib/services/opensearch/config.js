@@ -15,16 +15,10 @@ export const PRODUCTS_MAPPINGS = {
       type: "text",
     },
     id: {
-      type: "text",
-      fields: {
-        keyword: {
-          type: "keyword",
-          ignore_above: 256,
-        },
-      },
+      type: "keyword",
     },
     msrp: {
-      type: "float",
+      type: "integer",
     },
     name: {
       type: "text",
@@ -36,16 +30,10 @@ export const PRODUCTS_MAPPINGS = {
       },
     },
     price: {
-      type: "float",
+      type: "integer",
     },
     sku: {
-      type: "text",
-      fields: {
-        keyword: {
-          type: "keyword",
-          ignore_above: 256,
-        },
-      },
+      type: "keyword",
     },
     stock: {
       type: "integer",
