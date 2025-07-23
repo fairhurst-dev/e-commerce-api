@@ -1,7 +1,7 @@
 import { ELECTRONICS, CLOTHING, HOME, BOOKS, SPORTS } from "./constants.js";
-
 import Joi from "joi";
 import { randomUUID } from "crypto";
+
 export const userSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string()
@@ -35,7 +35,9 @@ const baseProductSchema = Joi.object({
 });
 
 export const newProductSchema = baseProductSchema.keys({
-  id: Joi.string().default(randomUUID()),
+  id: Joi.string()
+    .uuid()
+    .default(() => randomUUID()),
 });
 
 export const completeProductSchema = baseProductSchema.keys({
