@@ -19,33 +19,38 @@ import {
   respFormatter,
   badRequest,
   asyncTap,
+  notFound,
 } from "#routes/utils.js";
 
 export const addCartItemHandler = async (event) => {
   const productExists = await checkIfProductExists(event);
 
   if (!productExists) {
-    return badRequest();
+    return notFound();
   }
 
   const quantity = path(["body", "quantity"], event);
 
+  if (!quantity || quantity < 1) {
+    return badRequest("Quantity must be a positive integer.");
+  }
+
+  const product = await getProduct(event.pathParameters.id);
+
+  if (quantity > product.stock) {
+    return badRequest("Quantity exceeds available stock.");
+  }
+
   return tryCatch(
     pipe(
-      path(["pathParameters", "id"]),
-      getProduct,
-      andThen(
-        pipe(
-          converge(assoc("quantity"), [always(quantity), identity]),
-          converge(assoc("userUUID"), [() => getUserUUID(event), identity]),
-          cartItemValidator,
-          asyncTap(upsertCartItem),
-          andThen(respFormatter)
-        )
-      )
+      converge(assoc("quantity"), [always(quantity), identity]),
+      converge(assoc("userUUID"), [() => getUserUUID(event), identity]),
+      cartItemValidator,
+      asyncTap(upsertCartItem),
+      andThen(respFormatter)
     ),
     catcher
-  )(event);
+  )(product);
 };
 
 export const handler = middyfy(addCartItemHandler).use(httpJsonBodyParser());

@@ -1,9 +1,7 @@
 import {
   pipe,
-  curry,
   sum,
   concat,
-  pluck,
   map,
   find,
   complement,
@@ -11,20 +9,22 @@ import {
   includes,
   filter,
   omit,
-  length,
   identity,
   isNil,
   ifElse,
+  pluck,
 } from "ramda";
 
 //helpers
-const sumProp = curry((propName, items) => {
-  return pipe(pluck(propName), sum)(items);
-});
 
 const toDollars = (num) => num / 100;
 
-const calculateTotal = pipe(sumProp("price"));
+const sumQuantity = pipe(pluck("quantity"), sum);
+
+const calculateTotal = pipe(
+  map((item) => item.price * item.quantity),
+  sum
+);
 
 const toFixedDecimals = (num) => num.toFixed(2);
 const formatPrice = pipe(toDollars, toFixedDecimals, concat("$"));
@@ -46,7 +46,7 @@ export const transformCartForClient = (items) => {
   const baseCart = find(complement(isCartItem), items);
 
   const total = calculateTotal(cartItems);
-  const quantity = length(cartItems);
+  const quantity = sumQuantity(cartItems);
   const formattedTotal = formatPrice(total);
 
   return {
